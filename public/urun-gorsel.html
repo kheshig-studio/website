@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<title>Ürün görseli üretici</title>
+<style>
+  :root{
+    --ink:#0A0A0C; --panel:#111114; --line:rgba(255,255,255,.10);
+    --crimson:#890000; --lit:#E24A3E; --bone:#F4F2EF; --muted:#A5A1A0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1200px;height:750px;overflow:hidden}
+  body{
+    background:
+      radial-gradient(110% 80% at 82% 12%, rgba(137,0,0,.22) 0%, rgba(137,0,0,.06) 40%, transparent 70%),
+      var(--ink);
+    color:var(--bone); font-family:Inter,system-ui,sans-serif;
+    display:flex; flex-direction:column; padding:54px 60px; gap:26px;
+  }
+  .eyebrow{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--lit)}
+  h1{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:52px;line-height:1.03;text-transform:uppercase;letter-spacing:-.01em}
+  h1 span{color:var(--lit)}
+  .sub{font-size:19px;color:var(--muted);max-width:70ch;line-height:1.5}
+  .panel{
+    flex:1;min-height:0;background:rgba(255,255,255,.028);border:1px solid var(--line);
+    border-radius:4px;overflow:hidden;display:flex;flex-direction:column;backdrop-filter:blur(6px)
+  }
+  .bar{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--lit)}
+  .bar .m{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+  .bar .r{margin-left:auto;font-family:'Space Mono',monospace;font-size:12px;color:var(--lit)}
+  table{width:100%;border-collapse:collapse}
+  th{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);
+     text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:400}
+  td{padding:9px 14px;font-size:14px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--bone)}
+  td.m{font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  td.q{color:var(--muted);font-size:13px}
+  .yok{color:var(--lit);font-family:'Space Mono',monospace;font-size:12px}
+  .var{color:rgba(255,255,255,.42);font-family:'Space Mono',monospace;font-size:12px}
+  .rows{padding:16px;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+  .item{display:flex;gap:13px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:3px;background:rgba(255,255,255,.02)}
+  .pip{width:3px;align-self:stretch;background:var(--crimson);border-radius:2px;flex:0 0 auto}
+  .item .t{font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:15px;text-transform:uppercase;letter-spacing:.03em}
+  .item .d{font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.45}
+  .item .ts{margin-left:auto;font-family:'Space Mono',monospace;font-size:11.5px;color:rgba(255,255,255,.35);white-space:nowrap}
+  .split{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center;padding:18px;height:100%}
+  .col{border:1px solid var(--line);border-radius:3px;overflow:hidden;height:100%;display:flex;flex-direction:column}
+  .col h3{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.45);
+     padding:9px 13px;border-bottom:1px solid var(--line);font-weight:400}
+  .col .l{padding:7px 13px;font-family:'Space Mono',monospace;font-size:12.5px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.04)}
+  .arrow{font-size:26px;color:var(--lit)}
+  .foot{font-family:'Space Mono',monospace;font-size:12px;color:rgba(255,255,255,.32);border-top:1px solid var(--line);padding:10px 16px}
+  .brand{position:absolute;right:60px;bottom:46px;font-family:'Chakra Petch',sans-serif;font-weight:700;
+     font-size:15px;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.30)}
+  .brand b{color:var(--lit)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="brand">Kheshig <b>Studio</b></div>
+<script>
+const P = new URLSearchParams(location.search).get('p') || '0';
+
+const mapsRows = [
+  ["Anadolu Lokantası","0505 ••• 61 78","Restoran","4.9","Yok"],
+  ["Şahin Pide Salonu","0551 ••• 78 00","Pideci","4.7","Instagram"],
+  ["Derya Restaurant","0370 ••• 55 54","Restoran","4.1","Yok"],
+  ["Bereket Kebap","0532 ••• 12 40","Kebapçı","4.5","Facebook"],
+  ["Kardeşler Ocakbaşı","0538 ••• 09 17","Ocakbaşı","4.3","Yok"],
+  ["Safran Ev Yemekleri","0546 ••• 44 62","Ev yemekleri","4.8","Yok"],
+  ["Çınaraltı Kahvaltı","0505 ••• 90 31","Kahvaltı","4.6","Instagram"],
+];
+
+const views = {
+  '0': {
+    eyebrow:'MapsLead', h:'Arama listesi<br><span>saatler değil, dakikalar</span>',
+    sub:'Google Haritalar\'dan işletme adı, telefon, adres, kategori, puan ve web sitesi durumu — doğrudan Excel\'e.',
+    body:`<div class="bar"><span class="dot"></span><span class="m">Google Haritalar · Karabük / lokanta</span><span class="r">36 kayıt</span></div>
+      <table><thead><tr><th>İşletme Adı</th><th>Telefon</th><th>Kategori</th><th>Puan</th><th>Web</th></tr></thead><tbody>
+      ${mapsRows.map(r=>`<tr><td>${r[0]}</td><td class="m">${r[1]}</td><td class="q">${r[2]}</td><td class="m">${r[3]}</td>
+      <td><span class="${r[4]==='Yok'?'yok':'var'}">${r[4]}</span></td></tr>`).join('')}
+      </tbody></table>
+      <div class="foot">Web sitesi olmayanlar ayrıca işaretlenir — teklif götürülecek olanlar onlar.</div>`
+  },
+  '1': {
+    eyebrow:'FeedAlert', h:'Yeni içerik çıktığı an<br><span>haberin olsun</span>',
+    sub:'Ana sayfa linkini ver, akışı kendi bulur. Sadece yeni çıkanı bildirir — takibe aldığın andakileri değil.',
+    body:`<div class="bar"><span class="dot"></span><span class="m">İzlenen kaynak · 6</span><span class="r">bugün 4 bildirim</span></div>
+      <div class="rows">
+        <div class="item"><span class="pip"></span><div><div class="t">Yeni video · Teknoloji kanalı</div><div class="d">"Yapay zekâ ile veri toplama" — 14:32'de yayınlandı</div></div><span class="ts">2 dk önce</span></div>
+        <div class="item"><span class="pip"></span><div><div class="t">Yeni yazı · Sektör blogu</div><div class="d">RSS akışı ana sayfa linkinden otomatik bulundu</div></div><span class="ts">18 dk önce</span></div>
+        <div class="item"><span class="pip"></span><div><div class="t">Yeni duyuru · Resmî site</div><div class="d">Sayfa değişikliği yakalandı, içerik ayrıştırıldı</div></div><span class="ts">1 sa önce</span></div>
+        <div class="item"><span class="pip"></span><div><div class="t">Yeni video · Rakip kanal</div><div class="d">Kanal kimliği otomatik çözüldü</div></div><span class="ts">3 sa önce</span></div>
+      </div>
+      <div class="foot">Kurulum gerektirmez · Tek dosya · Türkçe / İngilizce</div>`
+  },
+  '2': {
+    eyebrow:'Sinyal', h:'Haber akışından<br><span>senin üslubunla içerik</span>',
+    sub:'Sekiz haber kaynağını tarar, tekilleştirir, tazeye göre sıralar — sonra senin geçmiş paylaşımlarının üslubuyla metin üretir.',
+    body:`<div class="bar"><span class="dot"></span><span class="m">8 kaynak tarandı · 41 başlık</span><span class="r">3 taslak hazır</span></div>
+      <div class="rows">
+        <div class="item"><span class="pip"></span><div><div class="t">Taslak 1</div><div class="d">Kısa, iddialı açılış + tek cümlelik çıkarım. Kaynak bağlantısı ekli.</div></div><span class="ts">özgün</span></div>
+        <div class="item"><span class="pip"></span><div><div class="t">Taslak 2</div><div class="d">Soru ile başlayan, yanıt bekleyen kurgu. Etkileşim odaklı.</div></div><span class="ts">özgün</span></div>
+        <div class="item"><span class="pip"></span><div><div class="t">Görsel eşleştirildi</div><div class="d">Lisanslı, ücretsiz, fotoğrafçı adı ve atıf ile birlikte geliyor.</div></div><span class="ts">hazır</span></div>
+      </div>
+      <div class="foot">Üslup, senin önceki paylaşımlarından öğrenilir — jenerik metin çıkmaz.</div>`
+  },
+  '3': {
+    eyebrow:'VideoHunter', h:'Bağlantıyı yapıştır<br><span>video sende</span>',
+    sub:'Kurulum yok, kayıt yok, reklam yok. Tek dosya masaüstü uygulaması.',
+    body:`<div class="bar"><span class="dot"></span><span class="m">İndirme kuyruğu</span><span class="r">2 / 3 tamamlandı</span></div>
+      <div class="rows">
+        <div class="item"><span class="pip"></span><div><div class="t">Tamamlandı · 1080p · MP4</div><div class="d">Ses ve görüntü birleştirildi, dosya klasöre kaydedildi</div></div><span class="ts">%100</span></div>
+        <div class="item"><span class="pip"></span><div><div class="t">Tamamlandı · 720p · MP4</div><div class="d">Bağlantıdan çözünürlük seçenekleri otomatik okundu</div></div><span class="ts">%100</span></div>
+        <div class="item"><span class="pip"></span><div><div class="t">İndiriliyor · 1080p</div><div class="d">Bağlantı doğrulandı, aktarım sürüyor</div></div><span class="ts">%64</span></div>
+      </div>
+      <div class="foot">Tek .exe · Kurulumsuz · Windows</div>`
+  },
+  '4': {
+    eyebrow:'SheetFlow · Ücretsiz', h:'Dağınık tablolar<br><span>tek temiz tabloya</span>',
+    sub:'Farklı yazılmış başlıkları eşleştirir, Türkçe karakter ve ayraç sorunlarını kendi çözer. Açık kaynak, MIT.',
+    body:`<div class="split">
+        <div class="col"><h3>Önce · 3 dosya</h3>
+          <div class="l">Ad Soyad · Telefon</div>
+          <div class="l">AD SOYAD ; TEL</div>
+          <div class="l">ad  soyad , telefon</div>
+          <div class="l" style="color:var(--lit)">≠ 3 farklı başlık</div>
+          <div class="l" style="color:var(--lit)">≠ 3 farklı ayraç</div>
+          <div class="l" style="color:var(--lit)">≠ bozuk Türkçe karakter</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="col"><h3>Sonra · tek dosya</h3>
+          <div class="l">Ad Soyad · Telefon</div>
+          <div class="l">Mehmet Yılmaz · 0532 ••• 14 08</div>
+          <div class="l">Ayşe Şahin · 0505 ••• 77 21</div>
+          <div class="l">Cem Öztürk · 0546 ••• 30 95</div>
+          <div class="l" style="color:#7FB069">✓ başlıklar eşleşti</div>
+          <div class="l" style="color:#7FB069">✓ kodlama düzeldi</div>
+        </div>
+      </div>
+      <div class="foot">GitHub'da açık kaynak · Bu araç için bir daha fiyat verilmiyor</div>`
+  }
+};
+
+const v = views[P] || views['0'];
+document.getElementById('app').outerHTML = `
+  <span class="eyebrow">${v.eyebrow}</span>
+  <h1>${v.h}</h1>
+  <p class="sub">${v.sub}</p>
+  <div class="panel">${v.body}</div>
+`;
+</script>
+</body>
+</html>
