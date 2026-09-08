@@ -64,7 +64,7 @@ const PRODUCTS: Product[] = [
   { name: "MapsLead", what: "Google Haritalar'dan işletme adı, telefon, adres ve web sitesi durumunu Excel'e döker.", kind: "Masaüstü", status: "Satışta", price: "750 ₺" },
   { name: "FeedAlert", what: "Ana sayfa linkinden akışı kendi bulur, yalnızca yeni içeriği haber verir.", kind: "Masaüstü", status: "Satışta", price: "400 ₺" },
   { name: "Sinyal", what: "Haber akışlarını tarar, sizin üslubunuzla tweet ve yanıt üretir. Kendi API anahtarınızla çalışır.", kind: "Uygulama", status: "Satışta", price: "1.500 ₺" },
-  { name: "VideoHunter", what: "Bağlantıdan video indirir. Kurulumsuz, tek dosya.", kind: "Masaüstü", status: "Ücretsiz" },
+  { name: "VideoHunter", what: "Bağlantıdan video indirir. Kurulumsuz, tek dosya.", kind: "Masaüstü", status: "Ücretsiz", href: "https://github.com/kheshig-studio/videohunter" },
   { name: "SheetFlow", what: "Farklı yazılmış başlıkları eşleştirir, Türkçe kodlamayı kendi çözer.", kind: "Açık kaynak", status: "Ücretsiz", href: "https://github.com/kheshig-studio/sheetflow" },
 ]
 
