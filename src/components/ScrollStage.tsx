@@ -1,6 +1,7 @@
 import Reveal from "@/components/Reveal"
 import WorkProof from "@/components/WorkProof"
 import ProductVisual from "@/components/ProductVisual"
+import GameMoment from "@/components/GameMoment"
 import { buttonVariants } from "@/components/ui/button"
 
 const EMAIL = "muhammetdiktepeee@gmail.com"
@@ -211,7 +212,84 @@ export function ScrollStage() {
           </div>
         </section>
 
-        {/* ── 4 · iletişim ───────────────────────────────── */}
+        {/* ── 4 · oyunlar ────────────────────────────────── */}
+        <section
+          id="oyunlar"
+          className="mx-auto flex min-h-svh max-w-5xl scroll-mt-8 flex-col items-center justify-center gap-10 px-6 py-24"
+        >
+          <Reveal className="flex flex-col items-center gap-5 text-center">
+            <Eyebrow>Oyunlar</Eyebrow>
+            <h2 className="font-display text-3xl font-bold uppercase leading-[1.08] tracking-tight sm:text-5xl">
+              Yan proje değil,
+              <span className="block text-crimson-lit">bitmiş iş</span>
+            </h2>
+          </Reveal>
+
+          <div className="grid w-full gap-4 md:grid-cols-2">
+            <Reveal>
+              <article className="group flex h-full flex-col gap-3 rounded-sm border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition-colors duration-200 hover:border-crimson-lit/50">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                    Android
+                  </span>
+                  <span className="rounded-xs bg-white/10 px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-foreground">
+                    Play'de yakında
+                  </span>
+                </div>
+                <h3 className="font-display text-lg font-bold uppercase tracking-wide">
+                  Block Game
+                </h3>
+                <img
+                  src="/blockgame.webp"
+                  width={620}
+                  height={852}
+                  loading="lazy"
+                  alt="Block Game — retro el konsolu çerçevesinde, yeşil ekranda renkli blokların birleştiği bir oyun anı; üstte COMBO x3 yazıyor."
+                  className="mx-auto h-auto max-h-[22rem] w-auto rounded-xs border border-white/10 object-contain"
+                />
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Dört yönden gelen blokları ortada birleştirirsiniz; üç aynı
+                  renk patlar, hızlı patlatınca kombo büyür. Her gün kuralı
+                  değişen bir meydan okuma, günlük görevler ve dükkân.
+                  Reklam yok, uygulama içi satın alma yok, hesap yok.
+                </p>
+                <span
+                  aria-hidden
+                  className="mt-auto h-px w-10 bg-crimson transition-all duration-300 group-hover:w-full"
+                />
+              </article>
+            </Reveal>
+
+            <Reveal delay={90}>
+              <article className="group flex h-full flex-col gap-3 rounded-sm border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition-colors duration-200 hover:border-crimson-lit/50">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                    Android · Masaüstü
+                  </span>
+                  <span className="rounded-xs bg-crimson/25 px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-crimson-lit">
+                    Geliştiriliyor
+                  </span>
+                </div>
+                <h3 className="font-display text-lg font-bold uppercase tracking-wide">
+                  Kırık Köprüler
+                </h3>
+                <GameMoment />
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Kalıcı ölümlü, metin tabanlı bir kıyamet sonrası rol yapma
+                  oyunu. Zar, savaş, ticaret, fraksiyonlar ve keşif sisiyle
+                  açılan bir harita. Ölünce eşyaların gider, öğrendiklerin
+                  kalır — ve bir sonraki hayat onları bilerek başlar.
+                </p>
+                <span
+                  aria-hidden
+                  className="mt-auto h-px w-10 bg-crimson transition-all duration-300 group-hover:w-full"
+                />
+              </article>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ── 5 · iletişim ───────────────────────────────── */}
         <section className="flex min-h-svh items-center justify-center px-6 py-24">
           <Reveal>
             <div className="w-full max-w-xl rounded-sm border border-white/10 bg-white/[0.04] px-8 py-12 text-center shadow-[0_8px_60px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl sm:px-12">
