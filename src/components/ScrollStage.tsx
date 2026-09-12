@@ -232,31 +232,46 @@ export function ScrollStage() {
                   <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                     Android
                   </span>
-                  <span className="rounded-xs bg-white/10 px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-foreground">
-                    Play'de yakında
+                  <span className="rounded-xs bg-crimson/25 px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-crimson-lit">
+                    Play'de yayında
                   </span>
                 </div>
                 <h3 className="font-display text-lg font-bold uppercase tracking-wide">
-                  Block Game
+                  Block Merge
                 </h3>
                 <img
                   src="/blockgame.webp"
                   width={620}
                   height={852}
                   loading="lazy"
-                  alt="Block Game — retro el konsolu çerçevesinde, yeşil ekranda renkli blokların birleştiği bir oyun anı; üstte COMBO x3 yazıyor."
+                  alt="Block Merge — retro el konsolu çerçevesinde, yeşil ekranda renkli blokların birleştiği bir oyun anı; üstte COMBO x3 yazıyor."
                   className="mx-auto h-auto max-h-[22rem] w-auto rounded-xs border border-white/10 object-contain"
                 />
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   Dört yönden gelen blokları ortada birleştirirsiniz; üç aynı
-                  renk patlar, hızlı patlatınca kombo büyür. Her gün kuralı
-                  değişen bir meydan okuma, günlük görevler ve dükkân.
-                  Reklam yok, uygulama içi satın alma yok, hesap yok.
+                  renk patlar, hızlı patlatınca kombo büyür. Üçüncü komboda bir
+                  güç açılır: roket, bomba, joker ya da ağır çekim. Yanında
+                  süresiz bulmaca modu — elde yapılmış 60 bölüm. Renk körü modu
+                  her rengi kendi simgesiyle ayırıyor. Reklam yok, uygulama içi
+                  satın alma yok, hesap yok.
                 </p>
                 <span
                   aria-hidden
                   className="mt-auto h-px w-10 bg-crimson transition-all duration-300 group-hover:w-full"
                 />
+                <div className="flex min-h-11 items-center justify-between gap-3">
+                  <span className="font-mono text-[13px] text-muted-foreground">
+                    Ücretsiz
+                  </span>
+                  <a
+                    href="https://play.google.com/store/apps/details?id=app.netlify.wonderful_nougat_7740ff.twa"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="-mr-1 rounded-xs px-1 py-2 font-mono text-xs uppercase tracking-[0.12em] text-crimson-lit underline-offset-4 hover:underline"
+                  >
+                    Play'de aç →<span className="sr-only"> — Block Merge</span>
+                  </a>
+                </div>
               </article>
             </Reveal>
 
