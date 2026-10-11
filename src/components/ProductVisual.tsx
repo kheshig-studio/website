@@ -4,7 +4,7 @@
 type Line = { text: string; hot?: boolean; dim?: boolean }
 
 const VISUALS: Record<string, { head: string; meta: string; lines: Line[] }> = {
-  MapsLead: {
+  "Firma Listesi": {
     head: "Karabük / lokanta",
     meta: "36 kayıt",
     lines: [

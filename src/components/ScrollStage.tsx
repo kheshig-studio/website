@@ -45,6 +45,8 @@ type Product = {
      "fiyat icin yazin" der. Uydurma fiyat konmaz. */
   price?: string
   href?: string
+  /* Varsayilan "Satin al →" / "Indir →" yerine baska bir eylem metni. */
+  cta?: string
 }
 
 /* Her urun kendi konusuyla mail acar — gelen kutusunda hangi urun
@@ -69,7 +71,9 @@ function productMail(name: string) {
 }
 
 const PRODUCTS: Product[] = [
-  { name: "MapsLead", what: "Google Haritalar'dan işletme adı, telefon, adres ve web sitesi durumunu Excel'e döker.", kind: "Masaüstü", status: "Satışta", price: "750 ₺" },
+  /* 11/10/2026: arac degil VERI satiliyor (MapsLead artik satista degil).
+     Fiyat satis\2-MAIL-SABLONLARI.md'deki tabloyla ayni tutulur. */
+  { name: "Firma Listesi", what: "81 il, 207 sektör. Firma adı, telefon, adres ve web sitesi durumu Excel'de. Web sitesi olmayanlar ayrıca süzülür; 20 satırlık örnek ücretsiz.", kind: "Veri", status: "Satışta", price: "750 ₺'den", cta: "Örnek iste →" },
   { name: "FeedAlert", what: "Ana sayfa linkinden akışı kendi bulur, yalnızca yeni içeriği haber verir.", kind: "Masaüstü", status: "Satışta", price: "400 ₺" },
   { name: "Sinyal", what: "Haber akışlarını tarar, sizin üslubunuzla tweet ve yanıt üretir. Kendi API anahtarınızla çalışır.", kind: "Uygulama", status: "Satışta", price: "1.500 ₺" },
   { name: "VideoHunter", what: "Bağlantıdan video indirir. Kurulumsuz, tek dosya.", kind: "Masaüstü", status: "Ücretsiz", href: "https://github.com/kheshig-studio/videohunter" },
@@ -225,7 +229,7 @@ export function ScrollStage() {
                         : {})}
                       className="-mr-1 rounded-xs px-1 py-2 font-mono text-xs uppercase tracking-[0.12em] text-crimson-lit underline-offset-4 hover:underline"
                     >
-                      {p.status === "Ücretsiz" ? "İndir →" : "Satın al →"}
+                      {p.cta ?? (p.status === "Ücretsiz" ? "İndir →" : "Satın al →")}
                       <span className="sr-only"> — {p.name}</span>
                     </a>
                   </div>
