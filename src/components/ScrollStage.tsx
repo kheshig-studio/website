@@ -5,6 +5,13 @@ import GameMoment from "@/components/GameMoment"
 import { buttonVariants } from "@/components/ui/button"
 
 const EMAIL = "muhammetdiktepeee@gmail.com"
+const BIONLUK = "https://bionluk.com/kheshig"
+const R10 = "https://www.r10.net/profil/225601-kheshigstudio.html"
+
+/* Platformdaki gercek sayilar (11/10/2026). Elle guncellenir — sayi
+   artinca buradan degistir; sisirilmis sayi yazilmaz. */
+const BIONLUK_SIPARIS = 18
+const BIONLUK_PUAN = "5.0"
 const MAIL_BODY = [
   "Merhaba,",
   "",
@@ -110,6 +117,18 @@ export function ScrollStage() {
                 Ürünler
               </a>
             </div>
+            <a
+              href={BIONLUK}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="group flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xs py-1 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground"
+            >
+              <span className="whitespace-nowrap text-crimson-lit">★ {BIONLUK_PUAN}</span>
+              <span className="whitespace-nowrap">Bionluk'ta {BIONLUK_SIPARIS} tamamlanan sipariş</span>
+              <span className="whitespace-nowrap text-crimson-lit underline-offset-4 group-hover:underline">
+                Gör →
+              </span>
+            </a>
           </div>
 
           {/* the proof, not an ornament */}
@@ -121,12 +140,16 @@ export function ScrollStage() {
           <Reveal className="flex flex-col items-center gap-5">
             <Eyebrow>Ne Yaparız</Eyebrow>
             <h2 className="font-display text-3xl font-bold uppercase leading-[1.08] tracking-tight sm:text-5xl">
-              İki disiplin,
+              Üç iş,
               <span className="block text-crimson-lit">tek masa</span>
             </h2>
           </Reveal>
-          <div className="grid w-full gap-4 sm:grid-cols-2">
+          <div className="grid w-full gap-4 md:grid-cols-3">
             {[
+              [
+                "Hazır Firma Listesi",
+                "Sektörü ve şehri söyleyin; Google Haritalar'dan telefonlu, adresli firma listesi Excel olarak aynı gün gelir.",
+              ],
               [
                 "Yazılım & Otomasyon",
                 "Veri kazıma, botlar, masaüstü araçlar, API ve Excel otomasyonu.",
@@ -327,6 +350,26 @@ export function ScrollStage() {
                 >
                   {EMAIL}
                 </a>
+                <p className="text-sm text-muted-foreground">
+                  Platform güvencesiyle çalışmak isterseniz:{" "}
+                  <a
+                    href={BIONLUK}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="text-crimson-lit underline-offset-4 hover:underline"
+                  >
+                    Bionluk
+                  </a>
+                  {" · "}
+                  <a
+                    href={R10}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="text-crimson-lit underline-offset-4 hover:underline"
+                  >
+                    R10
+                  </a>
+                </p>
               </div>
             </div>
           </Reveal>
