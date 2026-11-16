@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kırık Köprüler: Nüfus Defteri · Kheshig Studio</title>
+<meta name="description" content="Kırık Köprüler evreninde rastgele bir hayata doğ, yıl yıl yaşa. Sonunda İntizam Heyeti hayatını bir tutanağa geçirir.">
+<meta name="theme-color" content="#f3f0e8">
+<link rel="icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f3f0e8;
+    --paper-2: #ebe6da;
+    --card: #faf8f2;
+    --ink: #16150f;
+    --ink-2: #4a473d;
+    --ink-3: #7c786c;
+    --rule: #d6d0c1;
+    --red: #8a0f0b;
+    --red-soft: #8a0f0b14;
+    --good: #2f5d3a;
+    --display: "Bricolage Grotesque", system-ui, sans-serif;
+    --body: "Geist", system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 16px; }
+
+  /* üst şerit */
+  .top {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 0; border-bottom: 1px solid var(--rule);
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .top a { color: var(--ink-2); text-decoration: none; }
+  .top a:hover { color: var(--red); }
+  .top .brand { color: var(--red); }
+
+  /* giriş */
+  .intro { padding-top: 48px; padding-bottom: 32px; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); margin: 0 0 12px; }
+  h1 { font-family: var(--display); font-weight: 700; font-size: clamp(40px, 9vw, 64px); line-height: .95; letter-spacing: -.02em; margin: 0 0 20px; }
+  .lede { font-size: 18px; color: var(--ink-2); max-width: 34em; margin: 0 0 16px; }
+  .odds { margin: 28px 0 32px; border-top: 1px solid var(--rule); }
+  .odds-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
+  .odds-row span:last-child { font-family: var(--mono); color: var(--ink-2); }
+  .odds-cap { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 10px 0 6px; }
+
+  .btn {
+    appearance: none; border: 1px solid var(--ink); background: var(--ink); color: var(--paper);
+    padding: 14px 22px; border-radius: 2px; font-weight: 600; font-size: 16px; cursor: pointer;
+    min-height: 48px; transition: background .15s, color .15s, transform .05s;
+  }
+  .btn:hover { background: var(--red); border-color: var(--red); }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .btn.ghost:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn:focus-visible, .opt:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  .btn[disabled] { opacity: .45; cursor: default; }
+
+  /* oyun */
+  .hidden { display: none !important; }
+  .card-id {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--paper); border-bottom: 1px solid var(--rule);
+    padding: 12px 0 10px;
+  }
+  .id-line { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .id-name { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.05; letter-spacing: -.01em; }
+  .id-name small { font-family: var(--body); font-weight: 400; font-size: 13px; color: var(--ink-3); margin-left: 6px; letter-spacing: 0; }
+  .id-age { font-family: var(--mono); font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+  .id-sub { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 14px; margin-top: 10px; }
+  .stat { min-width: 0; }
+  .stat-k { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .stat-k b { font-weight: 500; color: var(--ink); }
+  .bar { height: 4px; background: var(--paper-2); margin-top: 3px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--ink); transition: width .35s ease; }
+  .bar.low i { background: var(--red); }
+  .money { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+  .money b { color: var(--ink); font-weight: 500; }
+
+  .log { list-style: none; margin: 0; padding: 8px 0 200px; }
+  .year { display: grid; grid-template-columns: 64px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px dashed var(--rule); animation: in .25s ease both; }
+  @keyframes in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .year-h { font-family: var(--mono); font-size: 12px; color: var(--ink-3); line-height: 1.3; padding-top: 3px; }
+  .year-h b { display: block; font-size: 15px; color: var(--ink); font-weight: 500; }
+  .year p { margin: 0 0 6px; }
+  .year p:last-child { margin-bottom: 0; }
+  .t-kotu { color: var(--red); }
+  .t-iyi { color: var(--good); }
+  .t-sessiz { color: var(--ink-3); font-style: italic; }
+  .t-donum { font-weight: 600; }
+  .t-secim { color: var(--ink-2); border-left: 2px solid var(--ink); padding-left: 10px; }
+  .t-olum { font-weight: 600; color: var(--red); }
+  .birth { padding: 18px 0 14px; border-bottom: 1px solid var(--rule); font-size: 17px; }
+  .birth .eyebrow { margin-bottom: 6px; }
+
+  /* alt eylem çubuğu */
+  .dock {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    background: linear-gradient(to top, var(--paper) 78%, #f3f0e800);
+    padding: 20px 0 calc(14px + env(safe-area-inset-bottom));
+  }
+  .dock .wrap { display: flex; gap: 10px; }
+  .dock-col { flex: 1; display: grid; gap: 8px; }
+  .dock .row { display: flex; gap: 10px; }
+  .dock .btn { flex: 1; }
+  .dock .btn.ghost { flex: 0 0 auto; }
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tab {
+    appearance: none; border: 1px solid var(--rule); background: var(--card); border-radius: 2px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    padding: 10px 6px; min-height: 42px; cursor: pointer;
+  }
+  .tab:hover { border-color: var(--ink); }
+  .tab:focus-visible, .chip:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+  /* paneller */
+  body.kilit { overflow: hidden; }
+  .sheet { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-end; justify-content: center; }
+  .sheet-arka { position: absolute; inset: 0; background: #16150f66; }
+  .sheet-kart {
+    position: relative; width: 100%; max-width: 680px; max-height: 86vh; display: flex; flex-direction: column;
+    background: var(--paper); border-top: 2px solid var(--ink); box-shadow: 0 -20px 40px -20px #16150f80;
+    padding: 0 16px calc(16px + env(safe-area-inset-bottom)); animation: up .2s ease both;
+  }
+  @keyframes up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .sheet-bas { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 10px; border-bottom: 1px solid var(--rule); }
+  .sheet-bas h2 { font-family: var(--display); font-size: 24px; margin: 0; }
+  .sheet-sonuc { font-size: 15px; padding: 0; min-height: 0; }
+  .sheet-sonuc:not(:empty) { padding: 10px 12px; margin-top: 10px; background: var(--card); border-left: 2px solid var(--ink); }
+  .sheet-sonuc.t-kotu { border-left-color: var(--red); }
+  .sheet-sonuc.t-iyi { border-left-color: var(--good); }
+  .sheet-ic { overflow-y: auto; padding: 6px 0 4px; -webkit-overflow-scrolling: touch; }
+  .chip {
+    appearance: none; border: 1px solid var(--ink); background: var(--paper); border-radius: 2px;
+    font-size: 14px; font-weight: 500; padding: 8px 12px; min-height: 40px; cursor: pointer; white-space: nowrap;
+  }
+  .chip:hover { background: var(--ink); color: var(--paper); }
+  .chip[disabled] { opacity: .4; cursor: default; background: var(--paper); color: var(--ink); }
+  .kisi { padding: 12px 0; border-bottom: 1px dashed var(--rule); }
+  .kisi.olu { color: var(--ink-3); }
+  .kisi-ust { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .kisi-ust b { font-size: 17px; }
+  .rol { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .num { font-family: var(--mono); font-size: 12px; color: var(--red); }
+  .kisi-yas { font-family: var(--mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+  .kisi-alt { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+  .kisi.olu .kisi-alt { color: var(--ink-3); }
+  .kisi-not { font-size: 13px; color: var(--ink-3); margin: 6px 0; }
+  .yakin { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; margin-top: 8px; font-family: var(--mono); font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+  .yakin .bar { margin-top: 0; }
+  .yakin b { color: var(--ink); font-weight: 500; }
+  .eylem { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .is-simdi { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0 4px; }
+  .is-simdi b { font-size: 17px; }
+  .satir-is { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--rule); }
+  .satir-is b { display: block; font-size: 15px; }
+  .satir-is small { display: block; font-size: 12.5px; color: var(--ink-3); }
+  .kapali { margin-top: 12px; }
+  .kapali summary { cursor: pointer; font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); padding: 8px 0; }
+  .kapali-is b { color: var(--ink-2); font-weight: 500; }
+  .bos { color: var(--ink-3); font-style: italic; }
+  .choice {
+    background: var(--card); border: 1px solid var(--ink); border-radius: 2px;
+    padding: 16px; box-shadow: 0 10px 30px -18px #16150f80; width: 100%;
+    max-height: 62vh; overflow-y: auto;
+  }
+  .choice:focus { outline: none; }
+  .choice:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  .choice .eyebrow { margin-bottom: 8px; }
+  .choice p { margin: 0 0 14px; font-size: 16px; }
+  .opts { display: grid; gap: 8px; }
+  .opt {
+    appearance: none; text-align: left; border: 1px solid var(--rule); background: var(--paper);
+    padding: 12px 14px; border-radius: 2px; cursor: pointer; font-weight: 500; min-height: 46px;
+  }
+  .opt:hover { border-color: var(--ink); background: var(--paper-2); }
+  .opt .k { font-family: var(--mono); font-size: 12px; color: var(--ink-3); margin-right: 8px; }
+
+  /* tutanak */
+  .end { padding-top: 28px; padding-bottom: 64px; }
+  .doc {
+    position: relative; background: var(--card); border: 1px solid var(--rule);
+    padding: 28px 22px 26px; font-family: var(--mono); font-size: 13.5px; line-height: 1.6;
+    box-shadow: 0 1px 0 var(--rule), 0 18px 40px -28px #16150f70;
+  }
+  .doc-h { text-align: center; border-bottom: 1px solid var(--ink); padding-bottom: 12px; margin-bottom: 16px; }
+  .doc-h div:first-child { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-2); }
+  .doc-h h2 { font-family: var(--mono); font-weight: 500; font-size: 18px; letter-spacing: .12em; margin: 4px 0 2px; text-transform: uppercase; }
+  .doc-h div:last-child { font-size: 11px; color: var(--ink-3); }
+  .doc dl { display: grid; grid-template-columns: 9.5em 1fr; gap: 4px 12px; margin: 0; }
+  .doc dt { color: var(--ink-3); text-transform: uppercase; font-size: 11px; letter-spacing: .06em; padding-top: 2px; }
+  .doc dd { margin: 0; }
+  .doc .big { font-size: 17px; font-weight: 500; }
+  .doc h3 { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin: 20px 0 8px; border-top: 1px dashed var(--rule); padding-top: 14px; }
+  .doc ul { margin: 0; padding-left: 1.2em; }
+  .doc li { margin-bottom: 3px; }
+  .doc .note { font-style: italic; }
+  .stamp {
+    position: absolute; right: 18px; top: 92px; width: 132px; height: 132px; border-radius: 50%;
+    border: 3px double var(--red); color: var(--red); display: grid; place-items: center; text-align: center;
+    transform: rotate(-14deg); opacity: .82; font-size: 10px; letter-spacing: .1em; line-height: 1.25; text-transform: uppercase;
+    pointer-events: none; mix-blend-mode: multiply;
+  }
+  .stamp b { display: block; font-size: 15px; letter-spacing: .14em; margin: 3px 0; }
+  .doc.kayityok dl, .doc.kayityok .stamp { opacity: .25; }
+  .void {
+    position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%) rotate(-8deg);
+    border: 3px solid var(--red); color: var(--red); padding: 6px 16px; font-size: 26px; letter-spacing: .2em; font-weight: 500;
+    background: var(--card); white-space: nowrap;
+  }
+  .kalan-note { margin-top: 18px; font-family: var(--body); font-size: 15px; }
+  .compare { margin: 22px 0 0; padding: 16px; border: 1px solid var(--rule); background: var(--paper); font-size: 15px; }
+  .compare b { font-family: var(--display); font-size: 28px; color: var(--red); display: block; line-height: 1.1; margin-bottom: 4px; }
+  .end-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .end-actions .btn { flex: 1 1 180px; }
+  .toast { font-family: var(--mono); font-size: 12px; color: var(--good); margin-top: 8px; min-height: 18px; }
+  .foot { font-size: 13px; color: var(--ink-3); padding: 24px 0 40px; border-top: 1px solid var(--rule); margin-top: 40px; }
+  .foot a { color: var(--ink-2); }
+
+  @media (max-width: 520px) {
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .year { grid-template-columns: 48px 1fr; gap: 10px; }
+    .doc { padding: 22px 16px; font-size: 12.5px; }
+    .doc dl { grid-template-columns: 1fr; gap: 0; }
+    .doc dt { padding-top: 8px; }
+    .stamp { width: 96px; height: 96px; top: 70px; right: 10px; font-size: 7.5px; }
+    .stamp b { font-size: 11px; }
+    .id-name { font-size: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="top">
+      <a href="/oyunlar/">← Oyunlar</a>
+      <span class="brand">Kırık Köprüler</span>
+    </nav>
+  </div>
+
+  <!-- giriş -->
+  <main id="giris" class="wrap intro">
+    <p class="eyebrow">Kırık Köprüler · Nüfus Defteri</p>
+    <h1>Kim olarak doğacağını sen seçmezsin.</h1>
+    <p class="lede">Çöküş'ün üzerinden 120 yıl geçti. Boğazları Nizam tutuyor. Yukarıda Hisar var, aşağıda sisin altında Alt Şehir.</p>
+    <p class="lede">Rastgele bir hayata doğacaksın. Yıl yıl yaşayacaksın: okula gidip gitmeyeceğine, hangi kapıyı çalacağına, ailenle ne kadar ilgileneceğine sen karar vereceksin. Öldüğünde İntizam Heyeti hayatını bir tutanağa geçirecek.</p>
+    <div class="odds" aria-label="Doğum olasılıkları">
+      <div class="odds-cap">Nerede doğarsın</div>
+      <div class="odds-row"><span>Alt Şehir, D Sektörü (en aşağı)</span><span>%28</span></div>
+      <div class="odds-row"><span>Alt Şehir, C Sektörü</span><span>%25</span></div>
+      <div class="odds-row"><span>Alt Şehir, B Sektörü</span><span>%22</span></div>
+      <div class="odds-row"><span>Alt Şehir, A Sektörü (Hisar'a en yakın)</span><span>%10</span></div>
+      <div class="odds-row"><span>Marmara kıyısında bir köy</span><span>%9</span></div>
+      <div class="odds-row"><span>Hisar</span><span>%3</span></div>
+      <div class="odds-row"><span>Göçmen damları</span><span>%2</span></div>
+      <div class="odds-row"><span>Lağım</span><span>%1</span></div>
+    </div>
+    <button class="btn" id="dogBtn" type="button">Doğ</button>
+    <p class="foot">Alt Şehir'de ortalama ömür 45 yıl, Hisar'da 65. Bebeklerin bir kısmı beş yaşını göremez. Ölüm olasılıkları Kırık Köprüler dünya kitabından gelir.<br>Bir <a href="/">Kheshig Studio</a> oyunu.</p>
+  </main>
+
+  <!-- oyun -->
+  <section id="oyun" class="hidden" aria-label="Hayat">
+    <div class="card-id">
+      <div class="wrap">
+        <div class="id-line">
+          <div class="id-name" id="idAd"></div>
+          <div class="id-age" id="idYas"></div>
+        </div>
+        <div class="id-sub" id="idAlt"></div>
+        <div class="stats" id="stats"></div>
+        <div class="money" id="money"></div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="birth" id="birth"></div>
+      <ol class="log" id="log" aria-live="polite"></ol>
+    </div>
+    <div class="dock">
+      <div class="wrap" id="dock"></div>
+    </div>
+  </section>
+
+  <!-- paneller -->
+  <div id="sheet" class="sheet hidden" role="dialog" aria-modal="true" aria-labelledby="sheetBaslik">
+    <div class="sheet-arka" id="sheetArka"></div>
+    <div class="sheet-kart">
+      <div class="sheet-bas"><h2 id="sheetBaslik"></h2><button type="button" class="chip" id="sheetKapat">Kapat</button></div>
+      <div class="sheet-sonuc" id="sheetSonuc" role="status" aria-live="polite"></div>
+      <div class="sheet-ic" id="sheetIcerik"></div>
+    </div>
+  </div>
+
+  <!-- tutanak -->
+  <section id="son" class="wrap end hidden" aria-label="Tutanak"></section>
+
+  <script src="motor.js"></script>
+  <script src="arayuz.js"></script>
+</body>
+</html>

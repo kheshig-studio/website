@@ -72,7 +72,7 @@ export function GameCard({ g }: { g: Game }) {
             <span className="font-display text-6xl font-bold tracking-[-0.04em] text-ink/15">
               {g.name}
             </span>
-            <Label className="text-ink-soft">Yakında</Label>
+            <Label className="text-ink-soft">{g.play ? "Tarayıcıda" : "Yakında"}</Label>
           </div>
         )}
       </div>

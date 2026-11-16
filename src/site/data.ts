@@ -205,10 +205,11 @@ export const GAMES: Game[] = [
   },
   {
     slug: "kirik-kopruler",
-    name: "Kırık Köprüler",
+    name: "Kırık Köprüler: Nüfus Defteri",
     platform: "Tarayıcı",
-    status: "Yapım aşamasında",
+    status: "Oynanabilir",
     description:
-      "Kalıcı ölümlü, metin tabanlı bir kıyamet sonrası rol yapma oyunu. Zar, savaş, ticaret, fraksiyonlar ve keşif sisiyle açılan bir harita. Ölünce eşyaların gider, öğrendiklerin kalır. Tarayıcı sürümü yapılıyor — hazır olunca burada oynanabilecek.",
+      "Kırık Köprüler evreninde bir hayat simülasyonu. Çöküş'ten 120 yıl sonra, Boğaz'da rastgele bir hayata doğuyorsun: büyük ihtimalle Alt Şehir'in sisinde, nadiren Hisar'da, bazen de lağımda. Yıl yıl yaşıyor; okula gidip gitmeyeceğini, hangi işe gireceğini, ailenle ne kadar ilgileneceğini sen seçiyorsun. Öldüğünde İntizam Heyeti hayatını mühürlü bir tutanağa geçiriyor. Bir hayat birkaç dakika sürüyor.",
+    play: "/oyunlar/kirik-kopruler/",
   },
 ]

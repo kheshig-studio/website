@@ -139,7 +139,7 @@ function Home() {
             {[
               { href: "/urunler/", label: "Satılık", title: "Programlar", text: `${PAID.length} hazır araç. Tek seferlik ödeme, kendi bilgisayarınızda çalışır.`, dark: true },
               { href: "/ucretsiz/", label: "Ücretsiz", title: "Açık kaynak", text: "İndirin, kullanın, kodunu inceleyin. Hesap yok, reklam yok." },
-              { href: "/oyunlar/", label: "Oyunlar", title: "Oyna", text: "Play'de yayında olanlar ve yakında tarayıcıdan oynanacaklar." },
+              { href: "/oyunlar/", label: "Oyunlar", title: "Oyna", text: "Play'de yayında olanlar ve tarayıcıdan hemen oynananlar." },
             ].map((d) => (
               <a
                 key={d.href}
