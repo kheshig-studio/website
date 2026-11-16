@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# kheshig.studio
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Kheshig Studio'nun sitesi. Vite + React + Tailwind, çok sayfalı.
+`main` dalına push edilince GitHub Actions siteyi derleyip GitHub Pages'e yayınlar.
 
-Currently, two official plugins are available:
+## Çalıştırma
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev      # geliştirme: http://localhost:5173
+npm run build    # dist/ klasörüne derler
+npm run preview  # derlenmiş siteyi önizler
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Sayfalar
+
+| Adres        | HTML dosyası          | Bileşen                  |
+|--------------|-----------------------|--------------------------|
+| `/`          | `index.html`          | `src/pages/home.tsx`     |
+| `/urunler/`  | `urunler/index.html`  | `src/pages/products.tsx` |
+| `/ucretsiz/` | `ucretsiz/index.html` | `src/pages/free.tsx`     |
+| `/oyunlar/`  | `oyunlar/index.html`  | `src/pages/games.tsx`    |
+| `/hakkimda/` | `hakkimda/index.html` | `src/pages/about.tsx`    |
+| `/iletisim/` | `iletisim/index.html` | `src/pages/contact.tsx`  |
+| (yok)        | `404.html`            | `src/pages/notfound.tsx` |
+
+Yeni sayfa için: klasör + `index.html` aç, `src/pages/` altına bileşen yaz,
+`vite.config.ts` içindeki `input` listesine ekle, `src/site/Layout.tsx` içindeki `NAV`'a link koy.
+
+## İçerik güncelleme
+
+Ürünler, oyunlar, linkler ve Bionluk sayıları **tek dosyada**: `src/site/data.ts`.
+
+- **Yeni ürün:** `PAID` (satılık) ya da `FREE` (ücretsiz) listesine bir kayıt ekle.
+- **Tarayıcıda oynanan oyun:** oyunun klasörünü (içinde `index.html` olan) `public/oyunlar/<slug>/`
+  altına kopyala, `GAMES` listesine kayıt ekle ve `play: "/oyunlar/<slug>/"` yaz.
+  Kart otomatik olarak "Tarayıcıda oyna" butonu gösterir.
