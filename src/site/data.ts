@@ -106,6 +106,21 @@ export const PAID: Product[] = [
 
 export const FREE: Product[] = [
   {
+    slug: "tweet-sil",
+    name: "Tweet Sil",
+    kind: "Tarayıcı aracı",
+    tagline: "Tüm tweetlerinizi, retweet ve beğenilerinizi ücretsiz silin.",
+    description:
+      "X arşivinizdeki her tweeti tek tek, kendi tarayıcınızda siler — profilde görünmeyen eski tweetler dahil. Kurulum yok, hesap yok; verileriniz hiçbir sunucuya gitmez.",
+    features: [
+      "Binlerce tweet: arşivdeki hepsi",
+      "Durdur / kaldığı yerden devam et",
+      "İstek sınırına takılınca kendisi bekler",
+    ],
+    href: "/tweet-sil/",
+    cta: "Aracı aç",
+  },
+  {
     slug: "videohunter",
     name: "VideoHunter",
     kind: "Masaüstü",

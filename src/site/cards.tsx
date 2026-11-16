@@ -2,7 +2,8 @@ import { Arrow, Label, cx } from "./ui"
 import { productHref, type Game, type Product } from "./data"
 
 export function ProductCard({ p, free }: { p: Product; free?: boolean }) {
-  const external = Boolean(p.href)
+  // Yalnızca başka siteye giden linkler yeni sekmede açılır (sitedeki araçlar aynı sekmede).
+  const external = Boolean(p.href?.startsWith("http"))
   return (
     <article
       id={p.slug}
