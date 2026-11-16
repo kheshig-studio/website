@@ -17,7 +17,7 @@ function isActive(href: string) {
 function Logo() {
   return (
     <a href="/" className="flex items-center gap-2.5" aria-label="Kheshig Studio — ana sayfa">
-      <img src="/mark.png" alt="" width={34} height={30} className="h-[30px] w-auto" />
+      <img src="/mark.png" alt="" width={40} height={30} className="h-[30px] w-auto" />
       <span className="font-display text-[19px] font-bold tracking-[-0.02em]">
         Kheshig<span className="font-medium text-ink-soft"> Studio</span>
       </span>

@@ -106,13 +106,31 @@ function About() {
             </dl>
           </section>
 
-          <section>
-            <Label className="text-brand">Neden "Kheshig"?</Label>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-soft">
-              Keşig, Moğol İmparatorluğu'nda hükümdarın en güvendiği muhafız
-              birliğiydi: az sayıda, seçilmiş ve sözünün eri. Ben de iş
-              ilişkisinde aynısını hedefliyorum — az ama güvenilir.
-            </p>
+          <section className="grid gap-8 rounded-2xl border border-line bg-card p-7 sm:p-10 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] xl:items-center">
+            <img
+              src="/logo.png"
+              alt="Kheshig logosu: koyu kırmızı, dönen bir göz amblemi ve altında KHESHIG yazısı."
+              width={1200}
+              height={926}
+              loading="lazy"
+              className="h-auto w-full max-w-72"
+            />
+            <div>
+              <Label className="text-brand">Neden "Kheshig"?</Label>
+              <h2 className="mt-4 text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
+                Gözcü, muhafız.
+              </h2>
+              <p className="mt-4 text-lg leading-relaxed text-ink-soft">
+                Keşig, Moğol İmparatorluğu'nda hükümdarın çadırını gece gündüz
+                bekleyen muhafız birliğiydi — nöbetteyken gözünü ayırmayan
+                gözcüler. Logodaki göz oradan geliyor.
+              </p>
+              <p className="mt-4 text-lg leading-relaxed text-ink-soft">
+                Yazdığım araçlar da aynı işi yapıyor: siz uyurken siteleri,
+                fiyatları ve akışları izliyor, bir şey değişince haber veriyor.
+                Bana emanet ettiğiniz işi de aynı dikkatle beklerim.
+              </p>
+            </div>
           </section>
         </div>
       </Container>
