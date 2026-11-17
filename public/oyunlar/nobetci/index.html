@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nöbetçi — Kheshig Studio</title>
   <meta name="description" content="Seni izleyen ve alışkanlıklarını öğrenen bir rakibe karşı 1v1 nişancı. Kheshig Studio prototipi." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f3f0e8'/%3E%3Cpath d='M3 16 Q16 4 29 16 Q16 28 3 16Z' fill='%2316150f'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%238a0f0b'/%3E%3C/svg%3E" />
-  <script type="module" crossorigin src="./assets/index-BoiuYOUz.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-CNYNBV2W.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f3f0e8'/%3E%3Cpath d='M3 16 Q16 4 29 16 Q16 28 3 16Z' fill='%2316150f'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%238a0f0b'/%3E%3C/svg%3E" />
+  <script type="module" crossorigin src="./assets/index-kwPHKT9n.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-HRwG6VSH.css">
 </head>
 <body>
   <canvas id="c"></canvas>
@@ -44,7 +44,7 @@
 
   <!-- HUD -->
   <div id="hud" class="hidden">
-    <div id="crosshair"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i></div>
+    <div id="crosshair"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i><i class="dot"></i></div>
     <div id="hitmarker" class="hitmarker"><i></i><i></i><i></i><i></i></div>
     <div id="dmg"><div class="arc"></div></div>
     <div id="vignette"></div>
@@ -144,6 +144,18 @@
       <label class="set"><span data-tr="Ses" data-en="Volume">Ses</span><input id="set-vol" type="range" min="0" max="1" step="0.05" /><output id="set-vol-v"></output></label>
       <label class="set check"><input id="set-fps" type="checkbox" /><span data-tr="FPS göster" data-en="Show FPS">FPS göster</span></label>
 
+      <h3 data-tr="Nişangâh" data-en="Crosshair">Nişangâh</h3>
+      <label class="set"><span data-tr="Renk" data-en="Color">Renk</span>
+        <select id="ch-color"><option value="#16150f" data-tr="Mürekkep" data-en="Ink">Mürekkep</option><option value="#d0201a" data-tr="Kırmızı" data-en="Red">Kırmızı</option><option value="#19c24a" data-tr="Yeşil" data-en="Green">Yeşil</option><option value="#13c8d8" data-tr="Camgöbeği" data-en="Cyan">Camgöbeği</option><option value="#f1e400" data-tr="Sarı" data-en="Yellow">Sarı</option><option value="#ffffff" data-tr="Beyaz" data-en="White">Beyaz</option></select><output></output></label>
+      <label class="set"><span data-tr="Çizgi uzunluğu" data-en="Line length">Çizgi uzunluğu</span><input id="ch-size" type="range" min="0" max="20" step="1" /><output id="ch-size-v"></output></label>
+      <label class="set"><span data-tr="Boşluk" data-en="Gap">Boşluk</span><input id="ch-gap" type="range" min="0" max="20" step="1" /><output id="ch-gap-v"></output></label>
+      <label class="set"><span data-tr="Kalınlık" data-en="Thickness">Kalınlık</span><input id="ch-thick" type="range" min="1" max="6" step="1" /><output id="ch-thick-v"></output></label>
+      <div class="mech-grid">
+        <label class="set check"><input id="ch-dot" type="checkbox" /><span data-tr="Orta nokta" data-en="Center dot">Orta nokta</span></label>
+        <label class="set check"><input id="ch-dynamic" type="checkbox" /><span data-tr="Hareketle açılsın" data-en="Dynamic spread">Hareketle açılsın</span></label>
+        <label class="set check"><input id="ch-outline" type="checkbox" /><span data-tr="Dış çizgi" data-en="Outline">Dış çizgi</span></label>
+      </div>
+
       <h3 data-tr="Mekanikler" data-en="Mechanics">Mekanikler</h3>
       <p class="set-hint" data-tr="Antrenman yaptığın oyuna benzetmek için kapatabilirsin (ör. CS2/Valorant için duvar koşusu, dash ve kayma kapalı)." data-en="Turn off what the game you train for doesn't have (e.g. for CS2/Valorant: no wall-run, dash or slide).">.</p>
       <div class="mech-presets">
@@ -184,6 +196,6 @@
       <button id="keys-reset" class="btn small" data-tr="Varsayılanlara dön" data-en="Reset to defaults">Varsayılanlara dön</button>
     </div>
   </div>
-
+
 </body>
 </html>
