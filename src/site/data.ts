@@ -380,4 +380,19 @@ export const GAMES: Game[] = [
       note: "The game is currently in Turkish only.",
     },
   },
+  {
+    slug: "gozcu",
+    name: "Gözcü",
+    platform: "Tarayıcı",
+    status: "Oynanabilir",
+    description:
+      "Seni izleyen ve öğrenen bir rakibe karşı 1v1 nişancı. Kâğıt ve mürekkepten bir arenada koşuyor, kayıyor, zıplıyor ve nişan alıyorsun. Gözcü hangi koridordan geldiğini, çatışmada hangi yöne kaçtığını, yaralanınca ne yaptığını not ediyor ve her raunt sana göre biraz daha iyi hazırlanıyor. Ne öğrendiğini raunt aralarında söylüyor. Defterini tarayıcında saklıyor, yani bir dahaki gelişinde seni hatırlıyor. 5 raundu ilk alan kazanır. Klavye ve fare gerekir. Erken prototip.",
+    play: "/oyunlar/gozcu/",
+    en: {
+      name: "Gözcü (The Watcher)",
+      platform: "Browser",
+      description:
+        "A 1v1 shooter against an opponent that watches and learns you. You sprint, slide, jump and aim through an arena of paper and ink. The Watcher notes which lane you take, which way you dodge in a fight and what you do when you're hurt, and it prepares a little better for you every round. Between rounds it tells you what it learned. It keeps its notebook in your browser, so it remembers you next time. First to 5 rounds wins. Needs a keyboard and mouse. Early prototype.",
+    },
+  },
 ]
