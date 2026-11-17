@@ -117,6 +117,7 @@ export const PAID: Product[] = [
       "Tek .exe, masaüstü paneli, Türkçe / İngilizce",
     ],
     price: "400 ₺",
+    buy: "https://www.shopier.com/kheshigstudioo/53039636",
     image: {
       src: "/gorseller/feedalert.webp",
       alt: "FeedAlert kontrol paneli: üç adımlı kurulum rehberi, bot token alanı, kontrol aralığı ve Botu Başlat butonu.",
@@ -150,6 +151,7 @@ export const PAID: Product[] = [
       "Tek .exe — kurulum yok, Python yok",
     ],
     price: "500 ₺",
+    buy: "https://www.shopier.com/kheshigstudioo/53039578",
     image: {
       src: "/gorseller/tytakip.webp",
       alt: "TyTakipBot kontrol paneli: Kurulum, Takip ve Kayıtlar sekmeleri, bot token alanı ve Botu Başlat butonu.",
