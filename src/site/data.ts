@@ -381,18 +381,18 @@ export const GAMES: Game[] = [
     },
   },
   {
-    slug: "gozcu",
-    name: "Gözcü",
+    slug: "nobetci",
+    name: "Nöbetçi",
     platform: "Tarayıcı",
     status: "Oynanabilir",
     description:
-      "Seni izleyen ve öğrenen bir rakibe karşı 1v1 nişancı. Kâğıt ve mürekkepten bir arenada koşuyor, kayıyor, zıplıyor ve nişan alıyorsun. Gözcü hangi koridordan geldiğini, çatışmada hangi yöne kaçtığını, yaralanınca ne yaptığını not ediyor ve her raunt sana göre biraz daha iyi hazırlanıyor. Ne öğrendiğini raunt aralarında söylüyor. Defterini tarayıcında saklıyor, yani bir dahaki gelişinde seni hatırlıyor. 5 raundu ilk alan kazanır. Klavye ve fare gerekir. Erken prototip.",
-    play: "/oyunlar/gozcu/",
+      "Seni izleyen ve öğrenen bir rakibe karşı hızlı, 1v1 bir nişancı. Kâğıt ve mürekkepten arenalarda koşuyor, kayıp zıplayarak hız biriktiriyor, duvarlarda koşuyor ve atılıyorsun. Elinde tam otomatik bir tüfek ve bir pompalı var. Nöbetçi hangi koridordan geldiğini, çatışmada hangi yöne kaçtığını, hangi silahı ne zaman çektiğini not ediyor ve her raunt sana göre biraz daha iyi hazırlanıyor. Ne öğrendiğini raunt aralarında söylüyor; defterini tarayıcında saklıyor. İki harita ve üç zorluk seviyesi var. 5 raundu ilk alan kazanır. Klavye ve fare gerekir. Erken prototip.",
+    play: "/oyunlar/nobetci/",
     en: {
-      name: "Gözcü (The Watcher)",
+      name: "Nöbetçi (Sentinel)",
       platform: "Browser",
       description:
-        "A 1v1 shooter against an opponent that watches and learns you. You sprint, slide, jump and aim through an arena of paper and ink. The Watcher notes which lane you take, which way you dodge in a fight and what you do when you're hurt, and it prepares a little better for you every round. Between rounds it tells you what it learned. It keeps its notebook in your browser, so it remembers you next time. First to 5 rounds wins. Needs a keyboard and mouse. Early prototype.",
+        "A fast 1v1 shooter against an opponent that watches and learns you. You sprint, slide-hop to build speed, wall-run and dash through arenas of paper and ink, with a full-auto rifle and a shotgun. The Sentinel notes which lane you take, which way you dodge, which weapon you pull and when, and it prepares a little better for you every round. Between rounds it tells you what it learned, and it keeps its notebook in your browser. Two maps, three difficulty levels. First to 5 rounds wins. Needs a keyboard and mouse. Early prototype.",
     },
   },
 ]
