@@ -25,14 +25,14 @@
 
   /* ── dünya tabloları ─────────────────────────────────────── */
   const YERLER = {
-    hisar: { ad: "Hisar", uzun: "Hisar'da", sira: 0, olum: 0.42, ciger: 0.3 },
-    A: { ad: "A Sektörü", uzun: "Alt Şehir'in A Sektörü'nde", sira: 1, olum: 0.73, ciger: 1.0 },
-    B: { ad: "B Sektörü", uzun: "Alt Şehir'in B Sektörü'nde", sira: 2, olum: 0.8, ciger: 1.5 },
-    C: { ad: "C Sektörü", uzun: "Alt Şehir'in C Sektörü'nde", sira: 3, olum: 0.88, ciger: 2.0 },
-    D: { ad: "D Sektörü", uzun: "Alt Şehir'in D Sektörü'nde, Boğaz'ın en aşağısında", sira: 4, olum: 0.98, ciger: 2.5 },
-    koy: { ad: "Kıyı köyü", uzun: "Marmara kıyısında, Nizam'a balık ve tahıl veren bir köyde", sira: 3, olum: 0.84, ciger: 0.7 },
-    gocmen: { ad: "Göçmen", uzun: "D Sektörü'nün göçmen damlarında", sira: 4, olum: 1.08, ciger: 2.5 },
-    kalan: { ad: "Lağım", uzun: "Alt Şehir'in lağımlarında, Kalanlar'ın arasında", sira: 5, olum: 1.02, ciger: 0 },
+    hisar: { ad: "Hisar", uzun: "Hisar'da", sira: 0, olum: 0.4, ciger: 0.3 },
+    A: { ad: "A Sektörü", uzun: "Alt Şehir'in A Sektörü'nde", sira: 1, olum: 0.69, ciger: 1.0 },
+    B: { ad: "B Sektörü", uzun: "Alt Şehir'in B Sektörü'nde", sira: 2, olum: 0.75, ciger: 1.5 },
+    C: { ad: "C Sektörü", uzun: "Alt Şehir'in C Sektörü'nde", sira: 3, olum: 0.82, ciger: 2.0 },
+    D: { ad: "D Sektörü", uzun: "Alt Şehir'in D Sektörü'nde, Boğaz'ın en aşağısında", sira: 4, olum: 0.91, ciger: 2.5 },
+    koy: { ad: "Kıyı köyü", uzun: "Marmara kıyısında, Nizam'a balık ve tahıl veren bir köyde", sira: 3, olum: 0.79, ciger: 0.7 },
+    gocmen: { ad: "Göçmen", uzun: "D Sektörü'nün göçmen damlarında", sira: 4, olum: 1.0, ciger: 2.5 },
+    kalan: { ad: "Lağım", uzun: "Alt Şehir'in lağımlarında, Kalanlar'ın arasında", sira: 5, olum: 0.96, ciger: 0 },
   }
   const DOGUM_YERI = [
     ["hisar", 3], ["A", 10], ["B", 22], ["C", 25], ["D", 28], ["koy", 9], ["gocmen", 2], ["kalan", 1],
@@ -215,6 +215,9 @@
       cocuklar: [],
       borc: false,
       bayrak: {},
+      hast: {},
+      hapis: 0,
+      hapisToplam: 0,
       olaylar: {}, // olay id -> kaç kez
       sonOlay: {}, // olay id -> son görüldüğü yaş
       sonrakiSecim: rnd(6, 9),
@@ -361,7 +364,7 @@
       else {
         const eksik = (lira - p.lira) / Math.max(1, Math.ceil(birim * kisi / 10))
         p.lira = 0
-        p.saglik -= Math.round((3 + eksik * 7) * (p.bayrak.palto ? 0.6 : 1))
+        p.saglik -= Math.round((3 + eksik * 7) * (p.bayrak.palto ? 0.6 : 1) * (p.komurYil >= p.yil ? 0.7 : 1))
         p.umut -= 3
         if (eksik > 0.3 && sans(0.6)) satir(sec(["Kış boyunca ekmek yetmedi.", "Paranın bittiği aylarda aç yattın.", "Fişlerin bitti, liran hiç olmadı. Çoğu gece aç yattın."]), "kotu")
       }
@@ -396,7 +399,11 @@
     if (p.yas >= 25) q *= 1 + (100 - p.ciger) / 160
     q *= 1 + p.yosun / 70
     const M = MESLEK[p.meslek || "yok"]
-    if (p.yas >= 14) q += ((M.kaza || 0) + (M.siddet || 0) + (M.rad || 0)) * RISK
+    if (p.yas >= 14) q += ((M.kaza || 0) * (p.bayrak.bot ? 0.8 : 1) + (M.siddet || 0) + (M.rad || 0)) * RISK
+    if (p.hast.sari) q *= 1.12
+    if (p.hast.pas) q += 0.03
+    if (p.hast.lagim) q += 0.025
+    if (p.hapis > 0) q *= 1.6
     if (p.bayrak.cark) q += 0.006 * RISK
     if (p.bayrak.kacakci && p.meslek !== "kacakci") q += 0.006 * RISK
     return Math.min(0.95, q)
@@ -417,6 +424,11 @@
       ["aclik", (p.basamak >= 5 || p.lira + p.fis / 40 < 3 ? 10 : 2) * (p.bayrak.palto ? 0.5 : 1)],
       ["radyasyon", (p.bayrak.lagim ? 10 : 0) + (M.rad || 0) * 2000 + (p.yer === "kalan" ? 18 : 0)],
     ]
+    if (p.hast.pas) n.push(["pas", 30])
+    if (p.hast.lagim) n.push(["lagimates", 30])
+    if (p.hast.sari) n[0][1] *= 1.6
+    if (p.hapis > 0) n.push(["zindan", 25])
+    if (p.bayrak.bicak) n[3][1] *= 0.8
     if (y >= 55) n.push(["yaslilik", (y - 50) * 3])
     if (p.yer === "hisar") {
       n[0][1] *= 0.3
@@ -456,6 +468,9 @@
     radyasyon: (p) => (p.yer === "kalan" ? ["Lağımın derinindeki ışık sonunda seni de aldı.", "Lağımın derinlerindeki radyasyondan öldü."] : sec([["Lağımda filtren bitti. Yukarı çıktın ama ciğerlerin aşağıda kaldı.", "Lağımda filtresi bitti; radyasyon ciğerlerini yaktı."], ["Lağımdan getirdiğin hastalık seni yavaş yavaş tüketti.", "Lağımdan kaptığı radyasyon hastalığından öldü."]])),
     yaslilik: (p) => sec([["Yaşlılıktan, uykunda öldün.", "Yaşlılıktan, uykusunda öldü."], [`Bir sabah kalkmadın. ${p.yas} yaşındaydın; Alt Şehir için uzun bir ömür.`, `Bir sabah kalkmadı. ${p.yas} yaşındaydı.`], ["Akşam yemeğinden sonra gözlerini kapattın ve açmadın.", "Akşam yemeğinden sonra uykusunda öldü."]]),
   }
+  OLUM_METNI.pas = () => sec([["Pas humması üç hafta sürdü. Ateşin bir türlü düşmedi.", "Pas hummasından öldü; ateşi üç hafta düşmedi."], ["Elindeki küçük yara bütün kana yayıldı.", "Paslı bir demirin açtığı yaradan bulaşan hummadan öldü."]])
+  OLUM_METNI.lagimates = () => sec([["Lağım ateşi seni bırakmadı.", "Lağım ateşinden öldü."], ["Lağım ateşinin onuncu gününde gözlerini kapattın.", "Lağım ateşinin onuncu gününde öldü."]])
+  OLUM_METNI.zindan = () => sec([["Zindanın nemli hücresinde, bir kış gecesi öldün.", "Zindanda, bir kış gecesi hücresinde öldü."], ["Zindanda yayılan salgın seni de aldı.", "Zindanda yayılan bir salgında öldü."]])
   const OLUM_AD = {
     salgin: "Salgın / ateşli hastalık",
     aclik: "Açlık ve soğuk",
@@ -465,6 +480,9 @@
     yosun: "Yosun",
     radyasyon: "Radyasyon",
     yaslilik: "Yaşlılık",
+    pas: "Pas humması",
+    lagimates: "Lağım ateşi",
+    zindan: "Zindanda öldü",
   }
 
   /* ── olaylar ───────────────────────────────────────────────
@@ -506,7 +524,7 @@
     // gençlik ve yetişkinlik — Alt Şehir
     { id: "maasgunu", yas: [16, 70], w: 3, kosul: (p) => MESLEK[p.meslek || "yok"].kayitli && p.yer !== "hisar", f: (p) => sec(["Maaş günü bir deste Nizam fişi aldın. Pazarda kimse fiş istemedi.", "Fişin değeri yine düştü. Bir ekmek dün 30 fişti, bugün 45.", "Maaş fişlerini yastığının altında sakladın."]) },
     { id: "baskin", yas: [10, 80], w: 2, kosul: sefil, f: (p) => { p.umut -= 4; if (sans(0.15)) { p.saglik -= 15; return ["Nizam mahalleye baskın yaptı. Bir dipçik darbesi kaburganı kırdı.", "kotu"] } return "Gece mahalleye baskın yapıldı. Kapılar kırıldı, birkaç kişi götürüldü." } },
-    { id: "kaza", yas: [14, 65], w: (p) => (MESLEK[p.meslek || "yok"].kaza || 0) * 250, kosul: (p) => p.meslek, f: (p) => { p.saglik -= rnd(10, 22); return [isKazasi(p), "kotu"] } },
+    { id: "kaza", yas: [14, 65], w: (p) => (MESLEK[p.meslek || "yok"].kaza || 0) * 250, kosul: (p) => p.meslek, f: (p) => { p.saglik -= rnd(10, 22); let m = isKazasi(p); if (!p.hast.pas && sans(0.2)) { p.hast.pas = true; m += " Yara iltihaplandı: pas humması." } return [m, "kotu"] } },
     { id: "pus", yas: [3, 90], w: 2, kosul: (p) => p.yer !== "kalan" && p.yer !== "hisar", f: (p) => { p.ciger -= 4; return "Asit pusu aylarca dağılmadı. Herkes öksürdü." } },
     { id: "yildiz", yas: [8, 90], w: 1, ara: 10, kosul: (p) => p.yer !== "kalan", f: (p) => { p.umut += 8; return ["Bir gece gökyüzü açıldı ve aylardır ilk kez yıldızları gördün. Soluk ve azdılar, ama oradaydılar.", "iyi"] } },
     { id: "kesikyosun", yas: [12, 90], w: 1.2, ara: 6, kosul: altSehir, f: () => "Mahallede kesik Yosun satıldı. Üç kişi uyudu ve bir daha uyanmadı." },
@@ -519,7 +537,7 @@
     { id: "yosunderin", yas: [14, 90], w: (p) => (p.yosun > 20 ? 4 : 0), f: (p) => { p.yosun += 8; p.lira -= Math.min(p.lira, 5); return "Yosun olmadan uyuyamıyorsun artık." } },
     { id: "yosunbirak", yas: [14, 90], w: (p) => (p.yosun > 20 && p.umut > 50 ? 2 : 0), f: (p) => { p.yosun -= 25; p.saglik -= 5; return ["Bir kış boyunca titreyerek Yosun'u bıraktın.", "iyi"] } },
     { id: "dovme", yas: [14, 60], w: 2, kosul: (p) => p.bayrak.cark, f: () => sec(["Kafana yeni bir çark dövmesi yapıldı.", "Çark'ın barında makinelerin duasını ezberledin.", "Tarikatın büyükleri sana eski dünyadan kalma bir motoru öptürdü."]) },
-    { id: "kacakgece", yas: [14, 70], w: 2, kosul: (p) => p.bayrak.kacakci, f: (p) => { p.lira += rnd(8, 25); if (sans(0.15)) { p.sicil++; return ["Bir gece tekne yakalandı. Sen kaçtın; adın bir tutanağa geçti.", "kotu"] } return "Gece Boğaz'dan bir yük geçirdin. Kimse görmedi." } },
+    { id: "kacakgece", yas: [14, 70], w: 2, kosul: (p) => p.bayrak.kacakci, f: (p) => { p.lira += rnd(8, 25); if (sans(0.15)) { p.sicil++; if (sans(0.5)) return ["Bir gece tekne yakalandı." + hapseAt(p, rnd(1, 3), "kaçakçılıktan"), "kotu"]; return ["Bir gece tekne yakalandı. Sen kaçtın; adın bir tutanağa geçti.", "kotu"] } return "Gece Boğaz'dan bir yük geçirdin. Kimse görmedi." } },
     // nefer
     { id: "talim", yas: [12, 16], w: 6, kosul: (p) => p.numara, f: () => sec(["Barakada zil her sabah beşte çaldı.", "Lehimli bir Kalaşnikof kırmasını gözün kapalı söküp takmayı öğrendin.", "Taburdaki en büyük çocuk sana bir bağcık verdi."]) },
     { id: "neferbaskin", yas: [16, 50], w: 4, kosul: (p) => p.numara && ["nefer", "cavus"].includes(p.meslek), f: (p) => { if (sans(0.2)) { p.saglik -= rnd(10, 25); return ["Bir depo baskınında merdiven boşluğunda saçma yedin. Zırhın dayandı, kaburgaların dayanmadı.", "kotu"] } return sec(["Taburla bir depo baskınına gittin.", "Bir insan kaçakçısının peşinde çatıları taradınız.", "Kontrol noktasında nöbet tuttun. Geçen herkesin üstü arandı; askerlerinki hariç."]) } },
@@ -624,7 +642,7 @@
       id: "lagim", yas: [16, 45], kosul: (p) => altSehir(p) && !p.numara,
       metin: "Bir kaçakçı lağıma inecek birini arıyor: \"Maskeni takıp ineceksin, Kalanlar'dan paketi alıp çıkacaksın. Filtre benden, 40 lira da senin.\" Lağımdaki radyasyon hâlâ öldürücü.",
       secenek: [
-        ["İn", (p) => { p.bayrak.lagim = true; if (sans(filtreRiski(p))) { p.saglik -= 25; p.lira += 40; p.onemli.push("Lağıma indi; filtresi yolda bitti."); return ["Filtren yarı yolda bitti. Yukarı çıkmayı başardın ama ciğerlerin hasar gördü.", "kotu"] } p.lira += 40; p.onemli.push("Gaz maskesiyle lağıma inip Kalanlar'la alışveriş yaptı."); return "Aşağıda konuşan, adı olan insanlar gördün. Yukarıda bunu anlatsan kimse inanmaz." }],
+        ["İn", (p) => { p.bayrak.lagim = true; if (sans(filtreRiski(p))) { p.saglik -= 25; p.lira += 40; p.onemli.push("Lağıma indi; filtresi yolda bitti."); return ["Filtren yarı yolda bitti. Yukarı çıkmayı başardın ama ciğerlerin hasar gördü.", "kotu"] } p.lira += 40; p.onemli.push("Gaz maskesiyle lağıma inip Kalanlar'la alışveriş yaptı."); return "Aşağıda konuşan, adı olan insanlar gördün. Yukarıda bunu anlatsan kimse inanmaz." + yesilBulas(p) }],
         ["İnme", () => "Mazgal kapağına bir süre baktın, sonra yürüyüp gittin."],
       ],
     },
@@ -755,7 +773,7 @@
 
   function secimYap(p, id, i) {
     if (id === "__okul" || id === "__is") return ozelSecimYap(p, id, i)
-    const s = SECIMLER.find((x) => x.id === id)
+    const s = SECIMLER.find((x) => x.id === id) || ZINDAN_SECIM.find((x) => x.id === id)
     p.olaylar["sec_" + id] = (p.olaylar["sec_" + id] || 0) + 1
     const r = s.secenek[i][1](p)
     const [metin, tur] = Array.isArray(r) ? r : [r, "secim"]
@@ -1006,13 +1024,16 @@
     p.yas++
     p.yil++
     p.buYil = { etk: {}, basvuru: 0 }
+    if (p.hapis > 0) return zindanYili(p, yasBas)
     const satirlar = []
     const satir = (metin, tur) => satirlar.push({ metin, tur: tur || "" })
 
     yaslan(p)
+    hastalikYil(p, satir)
     donum(p, satir)
     aile(p, satir)
     yillikGecim(p, satir)
+    yakalanmaKontrol(p, satir)
 
     // olaylar: 1, bazen 2
     const n = sans(0.3) ? 2 : 1
@@ -1113,6 +1134,8 @@
       meslek: p.yas < 14 ? "Yok (çocuk)" : M.ad.charAt(0).toUpperCase() + M.ad.slice(1),
       medeni: p.evli ? (p.es.sag ? `Evli · ${p.es.ad}` : `Dul · ${p.es.ad}`) : "Bekâr",
       kardes: kardesOzet(p),
+      hastalik: Object.keys(p.hast).length ? Object.keys(p.hast).map((k) => HASTALIK_AD[k]).join(", ") : "Kayıtlı hastalığı yok",
+      zindan: p.hapisToplam ? `${p.hapisToplam} yıl` : "Hiç girmedi",
       cocuk: p.cocuklar.length ? `${p.cocuklar.length} (${yasayanCocuk} hayatta)` : "Yok",
       olum: `Çöküş'ten sonra ${p.yil}. yıl · ${p.yas} yaşında`,
       neden: OLUM_AD[p.olumNedeni],
@@ -1224,7 +1247,7 @@
     if (!k.sag || p.olu) return []
     const l = []
     const ekle = (id, sebep) => l.push({ id, ad: AILE_EYLEM_AD[id], uygun: !sebep, sebep: sebep || null })
-    const buYil = k.etkYil === p.yil ? "Bu yıl onunla zaten bir şey yaptın." : null
+    const buYil = p.hapis > 0 ? "Zindandasın; onu ancak ziyaret gününde görebilirsin." : k.etkYil === p.yil ? "Bu yıl onunla zaten bir şey yaptın." : null
     const kucuk = p.yas < 4 ? "Henüz çok küçüksün." : null
     ekle("vakit", kucuk || buYil)
     if (k.yas >= 3) {
@@ -1323,6 +1346,7 @@
 
   function isKilidi(p) {
     if (p.olu) return "Öldün."
+    if (p.hapis > 0) return "Zindandasın."
     if (p.yas < 14) return "Çalışmak için 14 yaşını beklemelisin."
     if (p.numara && ["nefer", "cavus"].includes(p.meslek)) return "Nizam'ın neferisin. Numara istifa etmez."
     if (p.meslek === "konsey") return "Konsey'den istifa edilmez."
@@ -1364,6 +1388,10 @@
       p.yer = "A"
       ek = " Hisar'daki eve arka merdivenden giriyorsun; ön kapıdan girmene izin yok."
     }
+    if (id === "tezgahci") {
+      p.lira -= 15
+      ek = " 15 liraya köprü pazarında bir tezgâh kiraladın."
+    }
     if (id === "meyhaneci") {
       p.lira -= 20
       ek = " 20 liraya bir tezgâh ve üç fıçı lağım birası aldın."
@@ -1388,7 +1416,7 @@
     const sebep = I && I.k(p)
     if (!I || sebep) return { metin: sebep || "Böyle bir iş yok.", tur: "sessiz" }
     p.buYil.basvuru++
-    if (sans(I.a(p))) {
+    if (sans(I.a(p) * (p.hast.yesil && !p.bayrak.sakla && p.yer !== "kalan" ? 0.6 : 1))) {
       const m = isBasla(p, id)
       p.lira = Math.max(0, Math.round(p.lira))
       return { metin: m, tur: "donum" }
@@ -1481,12 +1509,12 @@
 
   /* ── etkinlikler ─────────────────────────────────────────── */
   const ETKINLIK = [
-    { id: "revir", ad: "Revire git", bilgi: "10 lira · sağlık", k: (p) => (p.yer === "kalan" ? "Revir Kalanlar'ı kabul etmez." : p.lira < 10 ? "10 Koloni Lirası gerek." : null), f: (p) => { p.lira -= 10; p.saglik += rnd(10, 20); return ["Revirde gri önlüklü bir hemşire seni muayene etti. 10 liraya bir avuç ilaç aldın.", "iyi"] } },
+    { id: "revir", ad: "Revire git", bilgi: "10 lira · sağlık", k: (p) => (p.yer === "kalan" ? "Revir Kalanlar'ı kabul etmez." : p.lira < 10 ? "10 Koloni Lirası gerek." : null), f: (p) => { p.lira -= 10; p.saglik += rnd(10, 20); return ["Revirde gri önlüklü bir hemşire seni muayene etti. 10 liraya bir avuç ilaç aldın." + tedavi(p, 0.7), "iyi"] } },
     { id: "yardimevi", ad: "Yardımlaşma evine git", bilgi: "umut · bazen okuma", k: (p) => (!(altS(p) || p.yer === "koy") ? "Burada yardımlaşma evi yok." : p.yas < 6 ? "Henüz çok küçüksün." : null), f: (p) => { p.umut += 5; if (p.saglik < 60) p.saglik += 5; if (!p.okur && p.yas >= 10 && sans(0.25)) { p.okur = true; p.onemli.push("Okumayı bir yardımlaşma evinde öğrendi."); return ["Çorbanı içerken biri sana eski bir kitaptan okumayı öğretti.", "iyi"] } if (p.yas >= 16 && sans(0.1)) { p.sicil++; return ["Çorba sıcaktı. Ama kapıda Heyet'ten biri gelenlerin adlarını yazıyordu.", "kotu"] } return ["Bir kâse çorba içtin. Masada kimse kimin neye inandığını sormadı.", "iyi"] } },
     { id: "bar", ad: "Barda lağım birası iç", bilgi: "1 lira · umut", k: (p) => (p.yer === "kalan" || p.yer === "hisar" ? "Burada lağım birası satan yok." : p.yas < 16 ? "16 yaşından küçüklere vermiyorlar." : p.lira < 1 ? "1 Koloni Lirası gerek." : null), f: (p) => { p.lira -= 1; p.umut += 3; if (sans(0.12)) { p.saglik -= 8; return ["Barda bir kavgaya karıştın. Sabah kaburgaların konuşuyordu.", "kotu"] } return p.bayrak.cark ? "Çark'ın barında kafası dövmeli kardeşlerinle içtin." : "Bulanık bir bardak bira, üstünde parmak kalınlığında köpük. Tadı tam beklediğin gibiydi." } },
     { id: "yosun_al", ad: "Yosun al", bilgi: "5 lira · unutturur", k: (p) => (p.yas < 14 ? "Henüz çok küçüksün." : p.yer !== "kalan" && p.lira < 5 ? "5 Koloni Lirası gerek." : null), f: (p) => { if (p.yer !== "kalan") p.lira -= 5; if (p.yosun === 0) p.onemli.push("Yosun'la tanıştı."); p.yosun += 12; p.umut += 8; return "Bir avuç kurutulmuş Yosun aldın. O gece sefaletin çok uzakta kaldığı derin bir uyku uyudun." } },
     { id: "yosun_birak", ad: "Yosun'u bırakmayı dene", bilgi: "zor", k: (p) => (p.yosun === 0 ? "Yosun kullanmıyorsun." : null), f: (p) => { if (sans(0.45 + p.umut / 250)) { p.yosun -= 25; p.saglik -= 4; return ["Haftalarca titredin ama bıraktın. En azından şimdilik.", "iyi"] } p.umut -= 3; return ["Üçüncü gece dayanamadın.", "kotu"] } },
-    { id: "lagim", ad: "Lağıma in, Kalanlar'la takas yap", bilgi: "lira · radyasyon", k: (p) => (!altS(p) ? "Bunun için Alt Şehir'de olmalısın." : p.yas < 16 ? "16 yaşından küçüksün." : p.numara ? "Nefer lağıma emirle iner." : null), f: (p) => { p.bayrak.lagim = true; const l = rnd(25, 45); p.lira += l; if (sans(filtreRiski(p))) { p.saglik -= 20; return [`Filtren yarı yolda bitti. ${l} lirayla yukarı çıktın ama ciğerlerin zarar gördü.`, "kotu"] } return `Gaz maskeni takıp indin, Kalanlar'dan paketi alıp çıktın. Karşılığında ${l} Koloni Lirası kazandın.` } },
+    { id: "lagim", ad: "Lağıma in, Kalanlar'la takas yap", bilgi: "lira · radyasyon", k: (p) => (!altS(p) ? "Bunun için Alt Şehir'de olmalısın." : p.yas < 16 ? "16 yaşından küçüksün." : p.numara ? "Nefer lağıma emirle iner." : null), f: (p) => { p.bayrak.lagim = true; const l = rnd(25, 45); p.lira += l; if (sans(filtreRiski(p))) { p.saglik -= 20; return [`Filtren yarı yolda bitti. ${l} lirayla yukarı çıktın ama ciğerlerin zarar gördü.`, "kotu"] } return `Gaz maskeni takıp indin, Kalanlar'dan paketi alıp çıktın. Karşılığında ${l} Koloni Lirası kazandın.` + yesilBulas(p) } },
     { id: "karaborsa", ad: "Fişi karaborsada liraya çevir", bilgi: "kötü kur · risk", k: (p) => (p.fis < 100 ? "En az 100 fiş gerek." : null), f: (p) => { const l = Math.round(p.fis / 55); p.lira += l; p.fis = 0; if (sans(0.12)) { p.sicil++; return [`${l} lira aldın. Bir hafta sonra adın bir tutanağa geçti.`, "kotu"] } return `Fişlerini bir karaborsacıya verdin, karşılığında ${l} Koloni Lirası aldın.` } },
     { id: "cark", ad: "Çark'a katıl", bilgi: "koruma · şiddet", k: (p) => (!["B", "C", "D", "gocmen"].includes(p.yer) ? "Çark senin mahallende değil." : p.bayrak.cark ? "Zaten Çark'tansın." : p.numara ? "Üniformalıları sevmezler." : p.yas < 14 || p.yas > 35 ? "14 ile 35 yaş arasını alırlar." : null), f: (p) => { if (sans(0.6)) { p.bayrak.cark = true; p.umut += 6; p.onemli.push("Çark tarikatına katıldı; kafası dövmeyle kaplandı."); return ["Kafanı kazıdılar ve ilk çark dövmesini tam tepene yaptılar.", "donum"] } if (sans(0.5)) { p.saglik -= 8; return ["Barlarına gittin. Seni sınamak için dövdüler, sonra kapı dışarı ettiler.", "kotu"] } return "Barlarına gittin. Seni dinlediler ama bir şey söylemediler. Belki seneye." } },
     { id: "mezarlik", ad: "Yamaçtaki mezarlığa çık", bilgi: "umut", k: (p) => (p.yer === "kalan" ? "Kalanlar'ın mezarı yok; adları ezberlenir." : p.yas < 8 ? "Henüz çok küçüksün." : null), f: (p) => { p.umut += rnd(3, 6); const olu = aileTum(p).filter((k) => !k.sag); if (olu.length) { const k = sec(olu); return `${k.ad} için dikilen taşın başında oturdun. Aşağıda Boğaz zift gibi kapkara duruyordu.` } return "Taşların arasında oturup Boğaz'a baktın. Kimse ölülerden manzarayı esirgemeyi akıl etmemiş." } },
@@ -1511,7 +1539,7 @@
 
   function etkinlikler(p) {
     return ETKINLIK.map((e) => {
-      const sebep = p.olu ? "Öldün." : p.buYil.etk[e.id] ? "Bunu bu yıl zaten yaptın." : e.k(p)
+      const sebep = p.olu ? "Öldün." : p.hapis > 0 ? "Zindandasın." : p.buYil.etk[e.id] ? "Bunu bu yıl zaten yaptın." : e.k(p)
       return { id: e.id, ad: e.ad, bilgi: e.bilgi, uygun: !sebep, sebep }
     }).filter((e) => !(e.sebep && /^(Köyde yaşamıyorsun|Ana'yı yalnızca|Yukarıdasın|Okula gitmiyorsun|Yosun kullanmıyorsun)/.test(e.sebep)))
   }
@@ -1519,7 +1547,7 @@
   function etkinlik(p, id) {
     const e = ETKINLIK.find((x) => x.id === id)
     if (!e) return { metin: "Böyle bir şey yok.", tur: "sessiz" }
-    const sebep = p.olu ? "Öldün." : p.buYil.etk[id] ? "Bunu bu yıl zaten yaptın." : e.k(p)
+    const sebep = p.olu ? "Öldün." : p.hapis > 0 ? "Zindandasın." : p.buYil.etk[id] ? "Bunu bu yıl zaten yaptın." : e.k(p)
     if (sebep) return { metin: sebep, tur: "sessiz" }
     p.buYil.etk[id] = true
     const r = e.f(p)
@@ -1534,7 +1562,7 @@
   const lagimdaPazarYok = (p) => (p.yer === "kalan" ? "Lağımda pazar yok; bunu sana getirecek bir kaçakçı da yok." : null)
   const PAZAR = [
     { id: "yemek", ad: "Bir hafta sıcak yemek", fiyat: 4, bilgi: "sağlık ve umut", k: () => null, f: (p) => { p.saglik += 5; p.umut += 2; return ["Bir hafta boyunca her akşam sıcak çorba ve taze ekmek yedin.", "iyi"] } },
-    { id: "ilac", ad: "Karaborsadan antibiyotik", fiyat: 12, bilgi: "sağlık, ama sahtesi de çıkar", k: () => null, f: (p) => { if (sans(0.12)) return ["İlaç sahte çıktı. Tebeşir ile şekerden başka bir şey değildi.", "kotu"]; p.saglik += rnd(12, 20); return ["Karaborsacının kutusundan çıkan ilaç işe yaradı. Ateşin düştü.", "iyi"] } },
+    { id: "ilac", ad: "Karaborsadan antibiyotik", fiyat: 12, bilgi: "sağlık, ama sahtesi de çıkar", k: () => null, f: (p) => { if (sans(0.12)) return ["İlaç sahte çıktı. Tebeşir ile şekerden başka bir şey değildi.", "kotu"]; p.saglik += rnd(12, 20); return ["Karaborsacının kutusundan çıkan ilaç işe yaradı. Ateşin düştü." + tedavi(p, 0.8), "iyi"] } },
     { id: "filtre", ad: "Gaz maskesi filtresi", fiyat: 6, coklu: true, bilgi: "lağımda filtren yarı yolda bitmez", k: (p) => lagimdaPazarYok(p) || (p.filtre >= 3 ? "Üç filtren var; fazlası kurur." : null), f: (p) => { p.filtre = (p.filtre || 0) + 1; return `Kaçakçıdan yeni bir filtre aldın. Şimdi ${p.filtre} filtren var.` } },
     { id: "palto", ad: "Kalın bir kışlık palto", fiyat: 10, tek: "palto", bilgi: "kışın açlık ve soğuk daha az vurur", k: lagimdaPazarYok, f: (p) => { p.bayrak.palto = true; return ["Eskiciden yünlü, ağır bir palto aldın. İlk kez bir kışı üşümeden geçireceksin.", "iyi"] } },
     { id: "oda", ad: "Daha iyi bir oda kirala", fiyat: 12, bilgi: "kirası her yıl ödenir · ciğerin daha az yıpranır", k: (p) => lagimdaPazarYok(p) || (p.yer === "hisar" ? "Hisar'da zaten iyi bir evin var." : p.bayrak.oda ? "Zaten kiradasın." : p.yas < 16 ? "16 yaşından küçüklere oda vermiyorlar." : null), f: (p) => { p.bayrak.oda = true; p.onemli.push(`${p.yas} yaşında kendi odasını kiraladı.`); return ["Penceresi sıkı kapanan, duvarı kuru bir oda kiraladın. Kirası her yıl ödenecek.", "iyi"] } },
@@ -1542,13 +1570,13 @@
     { id: "kitap", ad: "Eski bir kitap", fiyat: 3, bilgi: "umut · okur yazar olmalısın", k: (p) => lagimdaPazarYok(p) || (!p.okur ? "Okuma yazma bilmiyorsun." : null), f: (p) => { p.umut += 5; return sec(["Eskicide kapağı kopmuş bir kitap buldun. Uzun Karanlık'tan önce yazılmış; içindeki dünyayı tanımıyorsun.", "Bir şiir kitabı aldın. Yarısını anlamadın ama her gece okudun."]) } },
     { id: "tutun", ad: "Bir paket tütün", fiyat: 1, bilgi: "biraz umut, biraz ciğer", k: () => null, f: (p) => { p.umut += 2; p.ciger -= 1; return "Acı bir tütün. Rutubet kokusunu bastırmıyor ama elin bir işle meşgul oluyor." } },
     { id: "rusvet", ad: "Memura rüşvet ver, sicilini temizlet", fiyat: 30, bilgi: "sicilin bir derece temizlenir", k: (p) => lagimdaPazarYok(p) || (p.sicil === 0 ? "Sicilin zaten temiz." : null), f: (p) => { if (sans(0.8)) { p.sicil--; return ["Zarf masanın çekmecesine girdi. Bir hafta sonra sicilindeki bir kayıt kaybolmuştu.", "iyi"] } p.sicil++; return ["Memur zarfı aldı, sonra seni Heyet'e bildirdi. Sicilin daha da kirlendi.", "kotu"] } },
-    { id: "evrak", ad: "Sahte kayıt evrakı", fiyat: 40, tek: "evrak", bilgi: "kayıtsızlıktan çıkarsın", k: (p) => lagimdaPazarYok(p) || (p.basamak !== 5 ? "Zaten kayıtlısın." : null), f: (p) => { if (sans(0.12)) { p.sicil += 2; return ["Evrak sahte olduğu ilk kontrolde anlaşıldı. Sicilin karardı.", "kotu"] } p.basamak = 4; p.bayrak.evrak = true; p.onemli.push("Sahte bir evrakla kayda geçti."); return ["Sahteci adını eski bir deftere işledi. Artık Nizam'ın gözünde kayıtlı birisin.", "donum"] } },
+    { id: "evrak", ad: "Sahte kayıt evrakı", fiyat: 40, tek: "evrak", bilgi: "kayıtsızlıktan çıkarsın", k: (p) => lagimdaPazarYok(p) || (p.basamak !== 5 ? "Zaten kayıtlısın." : null), f: (p) => { if (sans(0.12)) { p.sicil += 2; return ["Evrak sahte olduğu ilk kontrolde anlaşıldı." + hapseAt(p, 2, "sahte evrakla yakalandığı için"), "kotu"] } p.basamak = 4; p.bayrak.evrak = true; p.onemli.push("Sahte bir evrakla kayda geçti."); return ["Sahteci adını eski bir deftere işledi. Artık Nizam'ın gözünde kayıtlı birisin.", "donum"] } },
     { id: "hisar", ad: "Bir günlüğüne Hisar'a çık", fiyat: 20, bilgi: "geçiş izni · umut", k: (p) => lagimdaPazarYok(p) || (p.yer === "hisar" ? "Zaten Hisar'dasın." : p.meslek === "hizmetci" ? "Her gün oradasın zaten." : p.yas < 12 ? "Çocuklara geçiş izni verilmiyor." : null), f: (p) => { p.umut += 6; return "Bir günlük geçiş izni aldın. Hisar'ın sokakları temizdi, kimse öksürmüyordu. Akşam yokuşu inerken Alt Şehir'in ışıklarına başka gözle baktın." } },
   ]
 
   function pazar(p) {
     return PAZAR.map((x) => {
-      let sebep = p.olu ? "Öldün." : x.tek && p.bayrak[x.tek] ? "Bundan sende var." : !x.coklu && p.buYil.pazar && p.buYil.pazar[x.id] ? "Bunu bu yıl zaten aldın." : p.yas < 6 ? "Henüz çok küçüksün." : x.k(p)
+      let sebep = p.olu ? "Öldün." : p.hapis > 0 ? "Zindandasın; buraya pazar gelmez." : x.tek && p.bayrak[x.tek] ? "Bundan sende var." : !x.coklu && p.buYil.pazar && p.buYil.pazar[x.id] ? "Bunu bu yıl zaten aldın." : p.yas < 6 ? "Henüz çok küçüksün." : x.k(p)
       if (!sebep && p.lira < x.fiyat) sebep = `${x.fiyat} Koloni Lirası gerek.`
       return { id: x.id, ad: x.ad, fiyat: x.fiyat, bilgi: x.bilgi, uygun: !sebep, sebep }
     })
@@ -1569,7 +1597,378 @@
     return { metin, tur }
   }
 
-  const KK = { dogum, yil, secimYap, tutanak, kiyas, tamAd, kisiAd, YERLER, BASAMAK_AD, MESLEK, temelOlum, sicilAd, basamakAd, aileListe, aileEylemleri, aileEylem, isler, basvur, istifa, etkinlikler, etkinlik, pazar, satinAl }
+  /* ═══ Sürüm 3: hastalıklar, Zindan, yeni yerler, işler, etkinlikler, ürünler, olaylar ═══ */
+
+  /* ── hastalıklar ─────────────────────────────────────────── */
+  const HASTALIK_AD = { sari: "sarı öksürük", pas: "pas humması", lagim: "lağım ateşi", yesil: "yeşillenme" }
+
+  function hastalikYil(p, satir) {
+    const h = p.hast
+    const altsehirli = ["A", "B", "C", "D", "gocmen"].includes(p.yer)
+    // sarı öksürük: ciğer yıprandıkça gelir, gitmez
+    if (!h.sari && p.yer !== "kalan" && p.yas >= 10 && p.ciger < 65 && sans(0.02 + (65 - p.ciger) / 1200)) {
+      h.sari = true
+      satir("Balgamın balmumu rengine döndü. Revirdeki hemşire adını koydu: sarı öksürük. Bunun ilacı yok.", "kotu")
+      p.onemli.push(`${p.yas} yaşında sarı öksürüğe yakalandı.`)
+    } else if (h.sari) {
+      p.ciger -= 0.7
+      p.saglik -= 0.8
+    }
+    // pas humması: paslı demirle çalışanlarda
+    if (!h.pas && p.yas >= 12 && ["hurdaci", "tersane", "hamal", "kaynakci", "dalgic"].includes(p.meslek) && sans(0.025)) pasBulas(p, satir)
+    else if (h.pas) {
+      p.saglik -= rnd(6, 12)
+      if (sans(0.3)) {
+        delete h.pas
+        satir("Pas humması kendiliğinden geçti. Elindeki yara iz bıraktı ama kapandı.", "iyi")
+      }
+    }
+    // lağım ateşi: salgın, yoksul mahallelerde daha sık; temiz su korur
+    if (!h.lagim && (altsehirli || p.yer === "kalan") && sans((["C", "D", "gocmen"].includes(p.yer) ? 0.018 : 0.01) * (p.suYil >= p.yil ? 0.3 : 1) * (p.hapis > 0 ? 3 : 1))) {
+      h.lagim = true
+      p.saglik -= rnd(10, 16)
+      satir(p.hapis > 0 ? "Zindanda lağım ateşi yayıldı ve sana da bulaştı." : "Mahalleye lağım ateşi geldi. Seni de yatağa düşürdü.", "kotu")
+    } else if (h.lagim) {
+      p.saglik -= rnd(4, 9)
+      if (sans(0.45)) {
+        delete h.lagim
+        satir("Lağım ateşini atlattın. Haftalarca ayağa kalkamadın ama atlattın.", "iyi")
+      }
+    }
+    // yeşillenme: kalıcı; insanlar uzak durur
+    if (h.yesil && p.yer !== "kalan" && sans(0.25)) {
+      p.umut -= 3
+      satir(sec(["Pazarda bir kadın derindeki yeşil lekeleri görünce çocuğunu senden uzaklaştırdı.", "Biri arkandan \"Yeşil!\" diye bağırdı. Başını çevirmedin.", "Barda yanına kimse oturmadı. Lekelerin yüzünden olduğunu biliyorsun."]), "kotu")
+    }
+    // tavla ve kömür gibi küçük teseller
+    if (p.bayrak.tavla && sans(0.5)) p.umut += 1
+  }
+
+  function pasBulas(p, satir) {
+    p.hast.pas = true
+    p.saglik -= 8
+    satir("Paslı bir sac elini kesti. Ertesi gün ateşin yükseldi: pas humması.", "kotu")
+  }
+
+  function yesilBulas(p) {
+    if (p.yer === "kalan" || p.hast.yesil) return ""
+    if (sans(0.15)) {
+      p.hast.yesil = true
+      p.onemli.push("Derisinde yeşil lekeler çıktı; bir daha geçmedi.")
+      return " Birkaç hafta sonra kolunda yeşil lekeler belirdi. Geçmeyecekler."
+    }
+    return ""
+  }
+
+  // ilaç ve tedavi: pas humması ve lağım ateşi iyileşebilir
+  function tedavi(p, olasilik) {
+    const iyilesen = []
+    for (const k of ["pas", "lagim"]) if (p.hast[k] && sans(olasilik)) {
+      delete p.hast[k]
+      iyilesen.push(HASTALIK_AD[k])
+    }
+    return iyilesen.length ? ` ${buyukHarf(iyilesen.join(" ve "))} geçti.` : ""
+  }
+
+  function durum(p) {
+    const l = Object.keys(p.hast).map((k) => HASTALIK_AD[k])
+    if (p.hapis > 0) l.unshift(`Zindanda · ${p.hapis} yıl kaldı`)
+    return l
+  }
+
+  /* ── Zindan ─────────────────────────────────────────────── */
+  function hapseAt(p, yil, neden) {
+    p.hapis = yil
+    p.hapisToplam = (p.hapisToplam || 0) + yil
+    p.sicil = Math.max(p.sicil, 2)
+    if (p.meslek && !p.numara && !["soylu", "konsey"].includes(p.meslek)) p.meslek = "yok"
+    if (p.bayrak.oda) p.bayrak.oda = false
+    if (p.meslek === "yok" && p.yerEski) {
+      p.yer = p.yerEski
+      p.yerEski = null
+    }
+    p.onemli.push(`${p.yas} yaşında ${neden} Zindan'a atıldı; ${yil} yıl yattı.`)
+    return ` Seni Zindan'a attılar. ${yil} yıl yatacaksın.`
+  }
+
+  const ZINDAN_OLAY = [
+    () => "Hücrede on iki kişiydiniz; yalnızca altı yatak vardı.",
+    () => "Gardiyan ekmeği yere attı ve kimin önce kapacağını seyretti.",
+    () => "Hücre arkadaşın bir gece öksürerek öldü. Sabah yerine bir başkasını getirdiler.",
+    () => "Zindanın duvarına çentik atarak günleri saydın.",
+    () => "Haftada bir yarım saat avluda güneş gördün.",
+    () => "Bir keşiş zindana gelip hastalara ilaç dağıttı. Gardiyanlar ona dokunmadı.",
+    () => "Mahallenden bir tanıdık da içeri düştü. Seni görünce başını öne eğdi.",
+    (p) => {
+      const z = aileTum(p).filter((k) => k.sag && k.yas >= 14 && k.yakinlik >= 40)
+      if (!z.length) return "Ziyaret gününde kimse gelmedi."
+      const k = sec(z)
+      k.yakinlik = kel(k.yakinlik + 5, 0, 100)
+      p.umut += 3
+      return `Ziyaret gününde ${akrabaAd(p, k).toLocaleLowerCase("tr")} ${k.ad} geldi. Parmaklığın arkasından el ele tutuştunuz.`
+    },
+  ]
+
+  const ZINDAN_SECIM = [
+    {
+      id: "z_rusvet",
+      metin: (p) => `Bir gardiyan kulağına eğildi: "20 lira ver, kayıtlarda adının yanına 'salıverildi' yazayım." Cebinde ${p.lira} lira var.`,
+      secenek: [
+        ["Öde", (p) => { if (p.lira < 20) return ["O kadar paran yoktu. Gardiyan güldü ve gitti.", "kotu"]; p.lira -= 20; if (sans(0.7)) { p.hapis = 0; return ["Ertesi sabah kapı açıldı. Kimse bir şey sormadı.", "iyi"] } return ["Parayı aldı ve bir daha görünmedi.", "kotu"] }],
+        ["Ödeme", () => "Gardiyan omuz silkip yürüdü."],
+      ],
+    },
+    {
+      id: "z_kacis",
+      metin: "Hücre arkadaşın bir kaçış planı fısıldadı: kanalizasyon ızgarası gevşemiş. \"Bu gece. Sen de geliyor musun?\"",
+      secenek: [
+        ["Kaç", (p) => { if (sans(0.4)) { p.hapis = 0; p.sicil++; p.bayrak.firari = true; p.onemli.push("Zindan'dan kaçtı."); return ["Izgarayı söktünüz ve lağıma indiniz. Sabah mahallendeydin; adın artık firari listesinde.", "donum"] } p.hapis += 2; p.saglik -= 10; return ["Yakalandınız. Dövdüler ve cezana iki yıl eklediler.", "kotu"] }],
+        ["Kalma, kaçma", () => "Kalmayı seçtin. Sabah hücre arkadaşının yatağı boştu; ondan bir daha haber alınmadı."],
+      ],
+    },
+  ]
+
+  function zindanYili(p, yasBas) {
+    const satirlar = []
+    const satir = (metin, tur) => satirlar.push({ metin, tur: tur || "" })
+    yaslan(p)
+    hastalikYil(p, satir)
+    aile(p, satir)
+    satir(sec(ZINDAN_OLAY)(p))
+    p.saglik -= rnd(1, 4)
+    p.hapis--
+    p.lira = Math.max(0, Math.round(p.lira))
+    kelle(p)
+    if (sans(olumOlasiligi(p, yasBas))) {
+      oldur(p)
+      satir(p.olumMetni, "olum")
+      return { satirlar, secim: null, olu: true }
+    }
+    if (p.hapis <= 0) {
+      p.hapis = 0
+      p.sicil = Math.max(0, p.sicil - 1)
+      satir("Zindan'dan çıktın. Dışarıdaki hava içeridekinden temiz değildi ama dışarıdaydın.", "donum")
+      return { satirlar, secim: null, olu: false }
+    }
+    let secim = null
+    if (sans(0.35)) {
+      const s = sec(ZINDAN_SECIM)
+      secim = { id: s.id, metin: typeof s.metin === "function" ? s.metin(p) : s.metin, secenekler: s.secenek.map((o) => o[0]) }
+    }
+    return { satirlar, secim, olu: false }
+  }
+
+  function yakalanmaKontrol(p, satir) {
+    if (p.hapis > 0 || p.yer === "kalan" || p.yas < 14) return false
+    if ((p.sicil >= 4 && sans(0.15)) || (p.sicil === 3 && sans(0.05)) || (p.bayrak.firari && sans(0.1))) {
+      const yil = rnd(1, Math.min(5, p.sicil))
+      satir("Bir gece kapını çaldılar. Sicilin yeterince kirlenmişti." + hapseAt(p, yil, "sicili yüzünden"), "kotu")
+      p.bayrak.firari = false
+      return true
+    }
+    return false
+  }
+
+  /* ── yeni meslekler ─────────────────────────────────────── */
+  Object.assign(MESLEK, {
+    hankatip: { ad: "Trakya hanında katip", fis: 0, lira: 20, ciger: 0.5 },
+    hanhamal: { ad: "Trakya hanında sözleşmeli hamal", fis: 0, lira: 12, kaza: 0.008, ciger: 1 },
+    hastabakici: { ad: "manastırda hastabakıcı", fis: 0, lira: 6, ciger: 0.6 },
+    dalgic: { ad: "batık mahallede dalgıç", fis: 0, lira: 22, kaza: 0.014, ciger: 1.4 },
+    dovuscu: { ad: "dövüş çukurlarında dövüşçü", fis: 0, lira: 26, siddet: 0.02, ciger: 1 },
+    gardiyan: { ad: "Zindan gardiyanı", fis: 150, lira: 3, siddet: 0.004, ciger: 1, kayitli: true },
+    tezgahci: { ad: "köprü pazarında tezgâhçı", fis: 0, lira: 14, ciger: 1 },
+  })
+  Object.assign(ISLER, {
+    hankatip: { k: (p) => (!altS(p) ? "Han Alt Şehir'in iskelesinde." : !p.okur ? "Okuma yazma bilmek gerek." : p.yas < 16 ? "16 yaşından küçüksün." : null), a: () => 0.4 },
+    hanhamal: { k: (p) => (!altS(p) ? "Han Alt Şehir'in iskelesinde." : null), a: () => 0.7 },
+    hastabakici: { k: (p) => (p.yer === "kalan" ? "Manastır Kalanlar'ı içeri almaz." : p.yas < 15 ? "15 yaşından küçüksün." : null), a: () => 0.8 },
+    dalgic: { k: (p) => (!altS(p) ? "Batık mahalle Alt Şehir'de." : p.yas < 16 ? "16 yaşından küçüksün." : p.saglik < 40 ? "Dalmak için sağlığın yetmez." : null), a: () => 0.6 },
+    dovuscu: { k: (p) => (!altS(p) ? "Dövüş çukurları Alt Şehir'de." : p.yas < 16 || p.yas > 40 ? "16 ile 40 yaş arasını alırlar." : p.saglik < 50 ? "Bu bedenle ringe çıkamazsın." : null), a: (p) => (p.huy === "ofkeli" ? 0.7 : 0.5) },
+    gardiyan: { k: (p) => (!altS(p) ? "Zindan Alt Şehir'de." : p.sicil > 0 ? "Sicilinin temiz olması gerek." : p.yas < 18 ? "18 yaşından küçüksün." : null), a: () => 0.5 },
+    tezgahci: { k: (p) => (!altS(p) ? "Köprü pazarı Alt Şehir'de." : p.lira < 15 ? "Bir tezgâh için 15 Koloni Lirası gerek." : null), a: () => 1 },
+  })
+
+  /* ── yeni etkinlikler ───────────────────────────────────── */
+  function dovus(p, odul) {
+    const kazan = 0.35 + (p.saglik - 50) / 200 + (p.huy === "ofkeli" ? 0.1 : 0) + (p.bayrak.bicak ? 0.05 : 0) + (p.meslek === "dovuscu" ? 0.15 : 0)
+    if (sans(0.05)) return ["Dövüşün ortasında Nizam baskın yaptı." + hapseAt(p, 1, "dövüş çukurunda yakalandığı için"), "kotu"]
+    if (sans(kazan)) {
+      p.lira += odul
+      p.umut += 4
+      return [`Rakibini üçüncü rauntta yere serdin. Çukurun sahibi eline ${odul} Koloni Lirası tutuşturdu.`, "iyi"]
+    }
+    p.saglik -= rnd(8, 25)
+    return [sec(["Rakibin seni ilk rauntta yere serdi. Kaburgaların günlerce sızladı.", "Kaşın yarıldı, bir dişin kırıldı. Kalabalık senin için değil, rakibin için bağırıyordu."]), "kotu"]
+  }
+
+  ETKINLIK.push(
+    { id: "koprugecesi", ad: "Köprü Gecesi'ne git", bilgi: "ölenleri anmak · umut", k: (p) => (p.yer === "kalan" ? "Kalanlar köprüye çıkamaz." : p.yas < 6 ? "Henüz çok küçüksün." : null), f: (p) => { p.umut += rnd(4, 8); const olu = aileTum(p).filter((k) => !k.sag); if (olu.length) { const k = sec(olu); return [`Köprünün üstünde ${k.ad} için bir fener yaktın. Yüzlerce fener suya yansıyordu.`, "iyi"] } return ["Köprünün üstü fenerle doldu. Kimin için yakıldıklarını bilmediğin fenerlerin arasında yürüdün.", "iyi"] } },
+    { id: "dovus", ad: "Dövüş çukurunda dövüş", bilgi: "para · sakatlık", k: (p) => (!altS(p) ? "Dövüş çukurları Alt Şehir'de." : p.yas < 16 || p.yas > 45 ? "16 ile 45 yaş arası olmalısın." : p.saglik < 30 ? "Bu bedenle dövüşemezsin." : null), f: (p) => dovus(p, rnd(10, 40)) },
+    { id: "bahis", ad: "Dövüş çukurunda bahse gir", bilgi: "en çok 10 lira", k: (p) => (!altS(p) ? "Dövüş çukurları Alt Şehir'de." : p.yas < 16 ? "16 yaşından küçüklere bahis yok." : p.lira < 5 ? "En az 5 Koloni Lirası gerek." : null), f: (p) => { const k = Math.min(p.lira, 10); if (sans(0.03)) return ["Bahis masasına baskın yapıldı." + hapseAt(p, 1, "kumar oynarken yakalandığı için"), "kotu"]; if (sans(0.45)) { p.lira += k; return [`Doğru adama oynadın. ${k} liran ${k * 2} lira oldu.`, "iyi"] } p.lira -= k; return [`Oynadığın adam ikinci rauntta yere düştü. ${k} liran gitti.`, "kotu"] } },
+    { id: "dal", ad: "Batık mahallede dal", bilgi: "eski dünya eşyası · boğulma", k: (p) => (!altS(p) ? "Batık mahalle Alt Şehir'de." : p.yas < 16 || p.yas > 50 ? "16 ile 50 yaş arası olmalısın." : p.saglik < 35 ? "Dalmak için sağlığın yetmez." : null), f: (p) => { const r = R(); const usta = p.meslek === "dalgic" ? 0.15 : 0; if (r < 0.12 - usta / 2) { p.saglik -= rnd(8, 15); return ["Bir pencere çerçevesine takıldın. Yukarı çıktığında ciğerlerin yanıyordu.", "kotu"] } if (r < 0.2) { p.hast.lagim = true; p.saglik -= 8; return ["Batık sokakların suyu lağımla karışmış. Ertesi hafta lağım ateşiyle yattın.", "kotu"] } if (r < 0.32 + usta) { p.umut += 8; p.lira += rnd(15, 35); return [sec(["Su altındaki bir evde sağlam bir duvar saati buldun. Köprü pazarında iyi para etti.", "Eski dünyadan kalma bir fotoğraf albümü çıkardın. Gülümseyen, maskesiz insanlar. Albümü satmadın, ama yanındaki gümüş çatalları sattın."]), "iyi"] } if (r < 0.75 + usta) { const l = rnd(5, 20); p.lira += l; return `Bir çuval paslı ama işe yarar eşya çıkardın. Köprü pazarında ${l} lira etti.` } return "Bütün gün daldın ve eli boş çıktın." } },
+    { id: "hurdatepe", ad: "Hurda tepesinde kazı yap", bilgi: "biraz para · pas, çete", k: (p) => (!(altS(p) || p.yer === "koy") ? "Hurda tepesi Alt Şehir'in kenarında." : p.yas < 10 ? "Henüz çok küçüksün." : null), f: (p) => { const r = R(); if (r < 0.08) { const l = []; pasBulas(p, (m) => l.push(m)); return [l[0], "kotu"] } if (r < 0.16) { p.saglik -= 8; return ["Tepenin çetesi seni kendi bölgelerinde yakaladı. Dövüp eli boş gönderdiler.", "kotu"] } if (r < 0.19) { const l = rnd(30, 60); p.lira += l; return [`Çöpün altından eski dünyadan kalma, hâlâ çalışan bir el feneri çıktı. Trakya hanındaki bir tüccar ${l} lira verdi.`, "iyi"] } const l = rnd(2, 12); p.lira += l; return `Bütün gün tel, bakır ve cam topladın. ${l} lira etti.` } },
+    { id: "manastir", ad: "Manastıra git", bilgi: "sağlık · pas ve lağım ateşine iyi gelir", k: (p) => (p.yer === "kalan" ? "Manastır Kalanlar'ı içeri almaz." : p.yas < 3 ? "Henüz çok küçüksün." : null), f: (p) => { p.saglik += 6; p.umut += p.inanc === "Hristiyan" ? 6 : 3; const t = tedavi(p, 0.5); return [`Kuzeyli keşişler kimin neye inandığını sormadan seni muayene etti ve şifalı ot verdi.${t}`, "iyi"] } },
+    { id: "hacilar", ad: "Bekleyen hacılarla konuş", bilgi: "umut · başka dünyalar", k: (p) => (p.yer === "kalan" ? "Hacılar lağıma inmez." : p.yas < 8 ? "Henüz çok küçüksün." : null), f: (p) => { p.umut += 2; return sec(["Kuzeyden gelen yaşlı bir hacı, köyündeki karlı kışları anlattı. Kar hiç görmedin.", "Hacılar dört yıldır iskelede bekliyor. Nizam geçmelerine izin verecek mi, kimse bilmiyor.", "Bir hacı sana ekmeğinin yarısını verdi ve senin için dua etti.", "Hacıların çocuklarıyla iskelede taş sektirdin. Dillerini anlamıyordun ama gülmek aynıydı."]) } },
+  )
+
+  /* ── yeni Pazar ürünleri ────────────────────────────────── */
+  PAZAR.push(
+    { id: "surup", ad: "Sarı öksürük şurubu", fiyat: 5, bilgi: "hafifletir, iyileştirmez", k: (p) => (!p.hast.sari ? "Sarı öksürüğün yok." : null), f: (p) => { p.ciger += 4; p.saglik += 3; return "Acı, koyu bir şurup. Birkaç hafta rahat nefes aldın." } },
+    { id: "merhem", ad: "Keşişlerin pas merhemi", fiyat: 7, bilgi: "pas hummasına iyi gelir", k: (p) => (!p.hast.pas ? "Pas humman yok." : null), f: (p) => { if (sans(0.7)) { delete p.hast.pas; return ["Merhemi yarana sürdün. Ateşin üç günde düştü; pas humması geçti.", "iyi"] } return ["Merhem işe yaramadı. Ateşin düşmedi.", "kotu"] } },
+    { id: "su", ad: "Bir yıllık temiz su", fiyat: 3, bilgi: "lağım ateşine karşı korur", k: (p) => (p.suYil > p.yil ? "Bu yılın suyunu zaten aldın." : null), f: (p) => { p.suYil = p.yil + 1; return "Sakaya bir yıllık temiz su ısmarladın. Bidonlar her hafta kapına gelecek." } },
+    { id: "komur", ad: "Bir kışlık kömür", fiyat: 3, bilgi: "kış daha az vurur", k: lagimdaPazarYok, f: (p) => { p.komurYil = p.yil + 1; p.saglik += 3; return "Bir kışlık kömürü odanın köşesine yığdın. Bu kış soba hiç sönmeyecek." } },
+    { id: "bot", ad: "Trakya hanından ısmarlama bot", fiyat: 15, tek: "bot", bilgi: "iş kazalarına karşı biraz korur", k: lagimdaPazarYok, f: (p) => { p.bayrak.bot = true; return ["Hanın kunduracısı ayağının ölçüsünü aldı. İki ay sonra ömür boyu dayanacak bir çift bot geldi.", "iyi"] } },
+    { id: "bicak", ad: "Sustalı bıçak", fiyat: 5, tek: "bicak", bilgi: "sokakta ve dövüşte işe yarar", k: (p) => lagimdaPazarYok(p) || (p.yas < 14 ? "Çocuklara bıçak satmıyorlar." : null), f: (p) => { p.bayrak.bicak = true; return "Köprü pazarından bir sustalı aldın. Ceketinin iç cebinde duruyor." } },
+    { id: "sandik", ad: "Kilitli sandık", fiyat: 6, tek: "sandik", bilgi: "hırsızlara karşı", k: lagimdaPazarYok, f: (p) => { p.bayrak.sandik = true; return "Demir köşeli, kilitli bir sandık aldın. Paranı artık yastığının altında saklamıyorsun." } },
+    { id: "tavla", ad: "Tavla takımı", fiyat: 4, tek: "tavla", bilgi: "akşamları umut", k: lagimdaPazarYok, f: (p) => { p.bayrak.tavla = true; p.umut += 3; return "Köprü pazarında kemik pullu eski bir tavla buldun. Akşamları avluda oynuyorsunuz." } },
+    { id: "oyuncak", ad: "Çocuğuna oyuncak", fiyat: 2, bilgi: "küçük bir çocuğunla yakınlık", k: (p) => (!p.cocuklar.some((c) => c.sag && c.yas < 12) ? "Küçük bir çocuğun yok." : null), f: (p) => { const c = sec(p.cocuklar.filter((x) => x.sag && x.yas < 12)); c.yakinlik = kel(c.yakinlik + 12, 0, 100); return [`${c.ad} için teneke bir asker aldın. Bütün gün elinden bırakmadı.`, "iyi"] } },
+    { id: "yuzuk", ad: "Eşine yüzük", fiyat: 15, bilgi: "eşinle yakınlık", k: (p) => (!(p.es && p.es.sag) ? "Evli değilsin." : null), f: (p) => { p.es.yakinlik = kel(p.es.yakinlik + 20, 0, 100); p.umut += 3; return [`${p.es.ad} için batık mahalleden çıkarılmış ince bir yüzük aldın. Parmağından hiç çıkarmadı.`, "iyi"] } },
+    { id: "kutsalsu", ad: "Hacılardan kutsal su", fiyat: 2, bilgi: "umut", k: lagimdaPazarYok, f: (p) => { p.umut += p.inanc === "Hristiyan" ? 5 : 2; return "Hacıların getirdiği küçük bir şişe kutsal su aldın. Kapının üstüne koydun." } },
+    { id: "saat", ad: "Batık mahalleden eski bir saat", fiyat: 25, tek: "saat", bilgi: "umut · tereke", k: lagimdaPazarYok, f: (p) => { p.bayrak.saat = true; p.umut += 8; p.onemli.push("Eski dünyadan kalma bir cep saati aldı."); return ["Uzun Karanlık'tan önce yapılmış, hâlâ çalışan bir cep saati. Tıkırtısını dinleyerek uyuyorsun.", "iyi"] } },
+    { id: "evlilikhediye", ad: "Bir kardeşine düğün hediyesi", fiyat: 8, bilgi: "evli bir kardeşle yakınlık", k: (p) => (!p.kardesler.some((k) => k.sag && k.evli && k.yas >= 0) ? "Evli bir kardeşin yok." : null), f: (p) => { const k = sec(p.kardesler.filter((x) => x.sag && x.evli && x.yas >= 0)); k.yakinlik = kel(k.yakinlik + 15, 0, 100); return [`${k.ad} için bir takım tabak aldın. Yıllarca o tabaklardan yediler.`, "iyi"] } },
+  )
+
+  /* ── yeni olaylar ───────────────────────────────────────── */
+  const olenAkraba = (p) => aileTum(p).filter((k) => !k.sag && k.olumYil >= p.yil - 1)
+  OLAYLAR.push(
+    { id: "koprugecesi_o", yas: [6, 95], w: 1.4, ara: 3, kosul: (p) => p.yer !== "kalan", f: (p) => { const o = olenAkraba(p); if (o.length) { p.umut += 2; return `Köprü Gecesi'nde ${o[0].ad} için de bir fener yakıldı. Fenerler suya karışıp kayboldu.` } return sec(["Köprü Gecesi geldi. Paslı köprünün üstü boydan boya fenerle doldu.", "Köprü Gecesi'nde Nizam yasakları kaldırdı. Gece boyunca kimse kimseye numarasını sormadı."]) } },
+    { id: "feneralayi_o", yas: [5, 95], w: 1.2, ara: 4, kosul: (p) => p.yer !== "kalan", f: (p) => (p.numara ? "Fener alayında sen de yürüdün. Kaldırımdan kimse alkışlamadı." : p.yer === "hisar" ? "Fener alayını evinizin balkonundan izledin. Aşağıda, kaldırıma dizilmiş Alt Şehirliler sessizdi." : "Fener alayı için seni de kaldırıma dizdiler. Neferler Hisar'a doğru geçerken alkışlamak zorundaydın.") },
+    { id: "dovusdedikodu", yas: [12, 70], w: 1, kosul: altSehir, f: () => sec(["Dövüş çukurlarında bir adam bir gecede üç rakibini yendi. Bütün mahalle onu konuşuyor.", "Dövüş çukurunda on altı yaşında bir çocuk öldü. Çukur bir hafta kapalı kaldı, sonra yeniden açıldı."]) },
+    { id: "batikbulgu", yas: [8, 90], w: 1, kosul: altSehir, f: () => sec(["Bir dalgıç batık mahalleden eski dünyaya ait sağlam bir piyano çıkardı. Kimse çalmayı bilmiyordu.", "Batık mahallede bir dalgıç boğuldu. Cesedi üç gün sonra köprünün ayağına takıldı."]) },
+    { id: "hurdacete", yas: [10, 80], w: 1, kosul: altSehir, f: () => "Hurda tepesinde iki çete çatıştı. Tepe günlerce yandı; duman bütün sektörü kapladı." },
+    { id: "zindankomsu", yas: [8, 95], w: 1.2, kosul: altSehir, f: () => sec(["Komşunu gece Zindan'a götürdüler. Neden götürüldüğünü kimse sormadı.", "Zindan'dan sekiz yıl sonra çıkan bir adam mahalleye döndü. Evini başkası tutmuştu."]) },
+    { id: "hanmektup", yas: [12, 90], w: 0.8, kosul: altSehir, f: () => "Trakya hanının önünde mühürlü sandıklar sıralandı. Taşıyan hamallar içlerinde ne olduğunu bilmiyordu." },
+    { id: "hacibekle", yas: [8, 95], w: 1, kosul: (p) => p.yer !== "kalan", f: () => sec(["İskelede kuzeyden gelmiş bir hacı kafilesi bekliyor. Kimisi üç yıldır burada.", "Nizam bekleyen hacılardan yeni bir geçiş vergisi istedi. Hacılar iskelede bütün gece ilahi söyledi."]) },
+    { id: "kopruyangin", yas: [8, 95], w: 0.6, kosul: altSehir, f: () => "Köprü pazarında yangın çıktı ve pazarın yarısı kül oldu. Bir hafta sonra yeniden kurulmuştu." },
+    { id: "hirsiz", yas: [16, 95], w: (p) => (p.lira > 10 && p.yer !== "kalan" && p.yer !== "hisar" ? 1.5 : 0), f: (p) => { if (p.bayrak.sandik) return "Gece odana hırsız girdi ama kilitli sandığını açamadı."; const k = Math.round(p.lira * 0.3); p.lira -= k; return [`Gece odana hırsız girdi. Yastığının altındaki ${k} lira gitti.`, "kotu"] } },
+    { id: "asitfirtina", yas: [3, 95], w: 1, kosul: (p) => p.yer !== "hisar" && p.yer !== "kalan", f: (p) => { p.ciger -= 3; return "Üç gün süren bir asit fırtınası çatıları deldi. Herkes evlerine kapandı." } },
+    { id: "subaskini", yas: [0, 95], w: 0.8, kosul: altSehir, f: (p) => { p.saglik -= 2; return "Boğaz taştı. Alt sokaklar haftalarca diz boyu suyun altında kaldı." } },
+    { id: "ekmekzam", yas: [10, 95], w: 1, kosul: (p) => p.yer !== "kalan", f: () => "Nizam erzak payını yine kıstı. Fişle alınan ekmek yarıya indi." },
+    { id: "komsuyardim", yas: [8, 95], w: 1, kosul: (p) => altSehir(p) || p.yer === "koy", f: (p) => { p.umut += 3; return sec(["Komşun kışın kapına bir torba kömür bıraktı. Kim olduğunu söylemedi.", "Hastalandığında yan odadaki kadın sana her gün çorba getirdi."]) } },
+    { id: "komsubebek", yas: [6, 95], w: 0.8, f: () => "Yan odada bir bebek doğdu. Bütün gece ağladı, bütün avlu sevindi." },
+    { id: "cenaze", yas: [8, 95], w: 1, kosul: altSehir, f: () => "Sokağın ucundaki yaşlı kadın öldü. Cenazesine bütün mahalle çıktı." },
+    { id: "nizamduyuru", yas: [10, 95], w: 0.8, kosul: (p) => p.yer !== "kalan", f: () => sec(["Nizam yeni bir duyuru astı: gece sokağa çıkma yasağı bir saat erkene alındı.", "Duvarlara yeni duyurular asıldı: firari neferlerin numaraları ve ödülleri."]) },
+    { id: "tasinma", yas: [16, 95], w: 0.5, kosul: (p) => altSehir(p) && !p.bayrak.oda, f: (p) => { p.umut -= 2; return "Ev sahibi kirayı artırdı. Ailen daha küçük, daha nemli bir odaya taşındı." } },
+    { id: "kardesbebek", yas: [14, 90], w: 1.2, kosul: (p) => p.kardesler.some((k) => k.sag && k.evli && k.yas >= 18), f: (p) => { const k = sec(p.kardesler.filter((x) => x.sag && x.evli && x.yas >= 18)); return [`${akrabaAd(p, k)} ${k.ad} ${k.cins === "e" ? "baba" : "anne"} oldu.`, "iyi"] } },
+    { id: "kardeshasta", yas: [14, 90], w: 0.8, kosul: (p) => p.kardesler.some((k) => k.sag && k.yas >= 20), f: (p) => { const k = sec(p.kardesler.filter((x) => x.sag && x.yas >= 20)); return `${akrabaAd(p, k)} ${k.ad} sarı öksürüğe yakalandı. Artık merdivenleri soluklanarak çıkıyor.` } },
+    { id: "kardesis", yas: [14, 90], w: 0.8, kosul: (p) => p.kardesler.some((k) => k.sag && k.yas >= 16 && k.meslek && k.meslek !== "nefer"), f: (p) => { const k = sec(p.kardesler.filter((x) => x.sag && x.yas >= 16 && x.meslek && x.meslek !== "nefer")); k.meslek = sec(["hamal", "fabrika", "seyyar", "hanhamal", "tezgahci", "yok"]); return k.meslek === "yok" ? `${akrabaAd(p, k)} ${k.ad} işini kaybetti.` : `${akrabaAd(p, k)} ${k.ad} yeni bir işe girdi: ${MESLEK[k.meslek].ad}.` } },
+    { id: "anneyasli", yas: [10, 90], w: 1, kosul: (p) => [p.anne, p.baba].some((k) => k.sag && k.yas >= 58), f: (p) => { const k = sec([p.anne, p.baba].filter((x) => x.sag && x.yas >= 58)); return `${akrabaAd(p, k)} ${k.ad} artık merdivenleri tek başına çıkamıyor.` } },
+    { id: "esisizi", yas: [18, 70], w: 1, kosul: (p) => p.es && p.es.sag && p.es.meslek && p.es.meslek !== "yok", f: (p) => { p.es.meslek = "yok"; p.umut -= 3; return [`Eşin ${p.es.ad} işini kaybetti.`, "kotu"] } },
+    { id: "esisbuldu", yas: [18, 70], w: 1, kosul: (p) => p.es && p.es.sag && (!p.es.meslek || p.es.meslek === "yok"), f: (p) => { p.es.meslek = sec(["seyyar", "fabrika", "eskici", "hastabakici", "tezgahci"]); return [`Eşin ${p.es.ad} iş buldu: ${MESLEK[p.es.meslek].ad}.`, "iyi"] } },
+    { id: "cocukokul", yas: [20, 70], w: 1.2, kosul: (p) => p.cocuklar.some((c) => c.sag && c.yas >= 7 && c.yas <= 9 && !c.okul), f: (p) => { const c = p.cocuklar.find((x) => x.sag && x.yas >= 7 && x.yas <= 9 && !x.okul); c.okul = true; return `${akrabaAd(p, c)} ${c.ad} mahalle okuluna başladı. Kitabını senden saklıyor, önce kendisi okumak istiyor.` } },
+    { id: "cocukmaas", yas: [28, 80], w: 1.2, kosul: (p) => p.cocuklar.some((c) => c.sag && c.yas >= 14 && c.yas <= 17 && c.meslek && c.meslek !== "yok"), f: (p) => { const c = p.cocuklar.find((x) => x.sag && x.yas >= 14 && x.yas <= 17 && x.meslek && x.meslek !== "yok"); p.lira += 3; return [`${akrabaAd(p, c)} ${c.ad} ilk kazancını eve getirdi ve masaya bıraktı.`, "iyi"] } },
+    { id: "kalan2", yas: [8, 90], w: 3, kosul: (p) => p.yer === "kalan", f: () => sec(["Yukarıdan inen bir dalgıç tünellerde kaybolmuştu. Onu mazgala kadar geri götürdünüz; teşekkür etmeden kaçtı.", "Yaşlılar bütün gece ölülerin adlarını sırayla saydı. Sayma üç gün sürdü.", "Yosun yataklarından birini bir taşkın sürükleyip götürdü.", "Bir Kalan çocuğu mazgaldan yukarıya çıkıp bir gün sonra döndü. Yukarıda kimse onu fark etmemiş.", "Köprü Gecesi'nde yukarıdaki fenerlerin ışığı mazgallardan aşağı süzüldü. Kalanlar da kendi ölülerini andı."]) },
+    { id: "koy2", yas: [6, 90], w: 3, kosul: (p) => p.yer === "koy", f: () => sec(["Köye kuzeyli hacılar uğradı. Bir gece ambarda yatıp sabah yola çıktılar.", "Köyün kuyusunun suyu acılaştı. Artık su şehirden taşınıyor.", "Köyde bir düğün oldu; üç gün davul çalındı.", "Nizam köyden altı genci tersanede çalışmaya götürdü.", "Kıyıya eski dünyadan kalma bir tekne enkazı vurdu. Bütün köy içini yağmaladı."]) },
+    { id: "hisar2", yas: [10, 90], w: 3, kosul: (p) => p.yer === "hisar", f: () => sec(["Bir Mühürler ailesi iflas etti. Evini bir Kılıçlar subayı satın aldı.", "Hisar'ın su depolarından biri çatladı. Bir hafta Alt Şehir'den su taşındı.", "Trakya hanından gelen bir tüccar ailene ipek getirdi.", "Yüksek Konsey'de bir subay Reis'e itiraz etti. Ertesi hafta subayın adı kayıtlardan silinmişti.", "Bir ziyafette Ege'den gelen bir konuk Koloni Lirası'nın yeni basımını gösterdi."]) },
+    { id: "nefer2", yas: [14, 55], w: 2, kosul: (p) => p.numara && ["nefer", "cavus"].includes(p.meslek), f: () => sec(["Zindan nöbetine verildin. İçeridekilerin çoğu senin mahallendendi.", "Dövüş çukuruna baskın yaptınız. Kumarhanenin kasası tutanağa yarım yazıldı.", "Köprü Gecesi'nde nöbetteydin. Fenerleri uzaktan izledin.", "Batık mahallede bir cesedi sudan çıkarmak sana düştü."]) },
+    { id: "cocuk2", yas: [5, 12], w: 3, kosul: (p) => altSehir(p), f: () => sec(["Hurda tepesinde teneke bir asker buldun. Yıllarca sakladın.", "Köprü pazarında kayboldun. Seni bir hacı bulup eve getirdi.", "Batık mahallenin kıyısında yüzmeyi öğrendin. Annen öğrenince seni bir hafta evden çıkarmadı.", "Fener alayında bir nefer sana söndürülmüş bir fener verdi.", "Arkadaşlarınla dövüş çukurunun kapısından içeri bakmaya çalıştınız. Kapıcı kulağını çekti."]) },
+    { id: "genc2", yas: [14, 26], w: 2, kosul: (p) => altSehir(p), f: () => sec(["İlk kez lağım birası içtin. Sabah hiçbir şey hatırlamıyordun.", "Köprü Gecesi'nde biriyle tanıştın. Fenerler sönünce o da kayboldu.", "Arkadaşların dövüş çukurunda para kazandığını anlattı. Biri gözünü kaybetmişti.", "Trakya hanının katipleri sana okuma yazma bilip bilmediğini sordu."]) },
+    { id: "yasli2", yas: [55, 99], w: 1.5, f: () => sec(["Köprü Gecesi'nde yaktığın fenerlerin sayısı her yıl artıyor.", "Artık torunları dinliyorsun; onların dünyası seninkinden farklı.", "Mahallede seni çocukluğundan tanıyan kimse kalmadı.", "Ellerin titremeye başladı. Çay bardağını iki elle tutuyorsun."]) },
+  )
+
+  /* ── yeni kararlar ──────────────────────────────────────── */
+  const yetiskinKardes = (p) => p.kardesler.filter((k) => k.sag && k.yas >= 18 && k.yakinlik >= 20)
+  SECIMLER.push(
+    {
+      id: "kardesborc", yas: [18, 80], kosul: (p) => yetiskinKardes(p).length && p.lira >= 10 && p.yer !== "kalan",
+      metin: (p) => { const k = yetiskinKardes(p)[0]; p.secimKisi = k.id; return `${akrabaAd(p, k)} ${k.ad} kapına geldi. Kira birikmiş, çocuklar aç. Senden 10 lira istiyor.` },
+      secenek: [
+        ["Ver", (p) => { const k = aileTum(p).find((x) => x.id === p.secimKisi); p.lira -= 10; k.yakinlik = kel(k.yakinlik + 15, 0, 100); if (sans(0.35)) { p.lira += 10; return [`${k.ad} parayı bir yıl sonra kuruşu kuruşuna geri getirdi.`, "iyi"] } return [`${k.ad} parayı aldı ve gözleri dolu dolu teşekkür etti.`, "iyi"] }],
+        ["Verme", (p) => { const k = aileTum(p).find((x) => x.id === p.secimKisi); k.yakinlik = kel(k.yakinlik - 15, 0, 100); return [`${k.ad} bir şey demeden gitti. Uzun süre uğramadı.`, "kotu"] }],
+      ],
+    },
+    {
+      id: "ebeveynhasta", yas: [16, 70], kosul: (p) => [p.anne, p.baba].some((k) => k.sag && k.yas >= 50) && p.yer !== "kalan",
+      metin: (p) => { const k = [p.anne, p.baba].filter((x) => x.sag && x.yas >= 50)[0]; p.secimKisi = k.id; return `${akrabaAd(p, k)} ${k.ad} ağır hastalandı. Revir ilaç için 12 lira istiyor. Cebinde ${p.lira} lira var.` },
+      secenek: [
+        ["Parayı bul ve öde", (p) => { const k = aileTum(p).find((x) => x.id === p.secimKisi); if (p.lira >= 12) { p.lira -= 12; k.yakinlik = kel(k.yakinlik + 20, 0, 100); return [`İlacı aldın. ${k.ad} bir ay sonra ayağa kalktı.`, "iyi"] } p.umut -= 4; if (sans(0.5)) { k.yakinlik = kel(k.yakinlik + 15, 0, 100); return [`Paran yetmedi; komşulardan topladın. ${k.ad} iyileşti, ama borcun var.`, "iyi"] } const l = []; akrabaOldu(p, k, (m) => l.push(m)); return [`Paranı topladın ama yetmedi. ${l[0]}`, "kotu"] }],
+        ["Ödeyemem", (p) => { const k = aileTum(p).find((x) => x.id === p.secimKisi); k.yakinlik = kel(k.yakinlik - 10, 0, 100); if (sans(0.4)) { const l = []; akrabaOldu(p, k, (m) => l.push(m)); return [l[0], "kotu"] } return `${k.ad} ilaçsız atlattı. Ama sana bir daha eskisi gibi bakmadı.` }],
+      ],
+    },
+    {
+      id: "dovuscagri", yas: [16, 35], kosul: (p) => altSehir(p) && p.saglik >= 55 && p.meslek !== "dovuscu",
+      metin: "Dövüş çukurunun sahibi seni pazarda durdurdu: \"Kolların sağlam. Bir dövüş, 30 lira. Kaybetsen de 5 lira veririm.\"",
+      secenek: [
+        ["Dövüş", (p) => { const r = dovus(p, 30); if (r[1] === "kotu" && !p.hapis) p.lira += 5; return r }],
+        ["Reddet", () => "Adam omuz silkti: \"Fikrini değiştirirsen çukur hep orada.\""],
+      ],
+    },
+    {
+      id: "haciaile", yas: [20, 75], kosul: (p) => p.yer !== "kalan" && p.yer !== "hisar",
+      metin: "Kuzeyli bir hacı ailesi kışı geçirecek bir yer arıyor. Karşılığında az bir para ve ekmeklerini paylaşmayı teklif ediyorlar.",
+      secenek: [
+        ["Evine al", (p) => { p.lira += 8; p.umut += 5; if (sans(0.12)) { p.hast.lagim = true; return ["Kışı birlikte geçirdiniz. Çocukları senden dilini öğrendi. Bahara doğru hepiniz lağım ateşine yakalandınız.", "kotu"] } return ["Kışı birlikte geçirdiniz. Giderken kapına tahta bir haç astılar.", "iyi"] }],
+        ["Yer yok", () => "Kapıyı kapattın. Sabah iskelede onları yağmurun altında gördün."],
+      ],
+    },
+    {
+      id: "gizlimektup", yas: [16, 55], kosul: (p) => altSehir(p) && p.hapis === 0,
+      metin: "Trakya hanında biri mühürlü bir mektup uzattı: \"Bunu Hisar'daki bir kapıya götür. 25 lira. Kimse açmayacak, sen de açmayacaksın.\"",
+      secenek: [
+        ["Götür", (p) => { if (sans(0.75)) { p.lira += 25; p.onemli.push("Trakya hanı için Hisar'a gizli bir mektup taşıdı."); return "Mektubu kapıdaki uşağa verdin. Kim olduğunu sormadılar, sen de sormadın. 25 lira cebinde." } return ["Geçiş kapısında üstünü aradılar ve mektubu buldular." + hapseAt(p, rnd(1, 3), "gizli bir mektup taşırken yakalandığı için"), "kotu"] }],
+        ["Reddet", () => "Mektubu geri ittin. Adam gülümsedi; anlaşılan başka birini bulacaktı."],
+      ],
+    },
+    {
+      id: "batiksandik", yas: [16, 45], kosul: (p) => altSehir(p),
+      metin: "Batık mahallede dalarken paslı bir sandık buldun. Kıyıda bir dalgıç seni gördü ve yarısını istiyor.",
+      secenek: [
+        ["Paylaş", (p) => { p.lira += 20; return "Sandığı birlikte açtınız: gümüş çatallar ve küflü bir ipek. Payına 20 lira düştü." }],
+        ["Al ve kaç", (p) => { if (sans(0.6)) { p.lira += 40; return ["Sandığı sırtlayıp sokaklara daldın. Köprü pazarında 40 lira etti.", "iyi"] } p.saglik -= 15; return ["Dalgıç ve arkadaşları seni bir ara sokakta yakaladı. Sandık da gitti, iki dişin de.", "kotu"] }],
+      ],
+    },
+    {
+      id: "hurdaharac", yas: [12, 65], kosul: (p) => altSehir(p) && (p.meslek === "hurdaci" || p.olaylar["hurdacete"]),
+      metin: "Hurda tepesinin çetesi yolunu kesti: \"Tepeye çıkmak beş lira. Ödemeyen tepede kazı yapamaz.\"",
+      secenek: [
+        ["Öde", (p) => { p.lira = Math.max(0, p.lira - 5); return "Beş lirayı verdin. Çetenin başı başını sallayıp yol verdi." }],
+        ["Direnme", (p) => { if (sans(0.5)) { p.saglik -= 12; return ["Dört kişiydiler. Kaburgaların bir ay sızladı.", "kotu"] } p.umut += 4; return ["Geri adım atmadın. Çetenin başı güldü: \"İnatçıymışsın.\" Bir daha para istemediler.", "iyi"] }],
+      ],
+    },
+    {
+      id: "yetimal", yas: [25, 55], kosul: (p) => (altSehir(p) || p.yer === "koy") && p.evli && p.es && p.es.sag,
+      metin: "Komşunun kızı ve kocası lağım ateşinden öldü. Küçük oğulları ortada kaldı. Kimse almazsa Nizam alacak.",
+      secenek: [
+        ["Evlat edin", (p) => { const c = kisiYap(p, "cocuk", "e", rnd(4, 9)); c.yakinlik = 50; c.evlatlik = true; p.cocuklar.push(c); p.umut += 6; p.onemli.push(`${c.ad} adında yetim bir çocuğu evlat edindi.`); return [`${c.ad} artık senin oğlun. İlk gece hiç konuşmadı, ikinci gece masaya oturdu.`, "iyi"] }],
+        ["Yardımlaşma evine götür", () => "Çocuğu yardımlaşma evine götürdün. Giderken arkasına bakmadı."],
+      ],
+    },
+    {
+      id: "feneralkis", yas: [14, 70], kosul: (p) => altSehir(p) && !p.numara,
+      metin: "Fener alayında neferler kalabalığı kaldırıma dizdi. Önünde duran subay herkesin alkışlamasını bekliyor.",
+      secenek: [
+        ["Alkışla", () => "Alkışladın. Avuçların kızarana kadar."],
+        ["Islık çal", (p) => { p.umut += 5; p.sicil++; if (sans(0.15)) return ["Islığın kalabalığın içinden duyuldu. Subay parmağıyla seni gösterdi." + hapseAt(p, 1, "Fener alayında ıslık çaldığı için"), "kotu"]; return ["Bir ıslık, sonra bir tane daha. Subay kimin çaldığını bulamadı ama sicilinde bir kayıt açıldı.", "secim"] }],
+      ],
+    },
+    {
+      id: "manastirgonullu", yas: [14, 60], kosul: (p) => p.yer !== "kalan",
+      metin: "Mahallede lağım ateşi salgını var. Manastırdaki keşişler hastalara bakacak gönüllü arıyor.",
+      secenek: [
+        ["Git", (p) => { p.umut += 8; p.onemli.push("Bir lağım ateşi salgınında manastırda gönüllü olarak hastalara baktı."); if (sans(0.25)) { p.hast.lagim = true; p.saglik -= 10; return ["Haftalarca hastalara su taşıdın. Sonunda sen de yatağa düştün.", "kotu"] } return ["Haftalarca hastalara su taşıdın. Keşişler adını dualarına kattı.", "iyi"] }],
+        ["Gitme", () => "Kapını kapattın ve salgın geçene kadar dışarı çıkmadın."],
+      ],
+    },
+    {
+      id: "yesilsakla", yas: [12, 90], kosul: (p) => p.hast.yesil,
+      metin: "Derindeki yeşil lekeler büyüyor. Pazarda insanlar senden uzak duruyor, iş verenler kollarına bakıyor.",
+      secenek: [
+        ["Uzun kollu giy, sakla", (p) => { p.umut -= 2; p.bayrak.sakla = true; return "Yazın da uzun kollu giyiyorsun artık. Kimse sormuyor, sen de anlatmıyorsun." }],
+        ["Saklama", (p) => { p.umut += 4; return "Kollarını sıvadın. Bakan baksın. Pazarda bir Kalan çocuğu sana göz kırptı." }],
+      ],
+    },
+    {
+      id: "dalgicteklif", yas: [16, 40], kosul: (p) => altSehir(p) && p.meslek !== "dalgic" && p.saglik >= 45,
+      metin: "Batık mahallede çalışan yaşlı bir dalgıç çırak arıyor: \"Nefesin uzunsa sana bu işi öğretirim. Para iyi, ama Boğaz bazen geri vermez.\"",
+      secenek: [
+        ["Çırak ol", (p) => { p.meslek = "dalgic"; p.onemli.push(`${p.yas} yaşında batık mahallede dalgıç oldu.`); return ["İlk gün iki dakika nefesini tuttun. Bir yıl sonra dört dakika tutuyordun.", "donum"] }],
+        ["Reddet", () => "Yaşlı dalgıç başını salladı: \"Akıllısın.\""],
+      ],
+    },
+  )
+
+  const KK = { dogum, yil, secimYap, tutanak, kiyas, tamAd, kisiAd, YERLER, BASAMAK_AD, MESLEK, temelOlum, sicilAd, basamakAd, aileListe, aileEylemleri, aileEylem, isler, basvur, istifa, etkinlikler, etkinlik, pazar, satinAl, durum }
   if (typeof window !== "undefined") window.KK = KK
   else globalThis.KK = KK
 })()

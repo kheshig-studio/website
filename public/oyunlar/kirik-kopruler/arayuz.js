@@ -46,6 +46,8 @@
     let h = bar("Sağlık", p.saglik) + bar("Ciğer", p.ciger) + bar("Umut", p.umut)
     h += p.yosun > 0 ? bar("Yosun", p.yosun, true) : `<div class="stat"><div class="stat-k"><span>Okur yazar</span><b>${p.okur ? "evet" : "hayır"}</b></div></div>`
     $("stats").innerHTML = h
+    const dr = KK.durum(p)
+    $("durum").innerHTML = dr.map((x) => `<span class="etiket${/Zindan/.test(x) ? " zindan" : ""}">${esc(x)}</span>`).join("")
     $("money").innerHTML = `<span>Koloni Lirası <b>${p.lira}</b></span><span>Nizam fişi <b>${p.fis}</b></span><span>Sicil <b>${KK.sicilAd(p.sicil)}</b></span>`
   }
 
@@ -271,6 +273,8 @@
       satir("Nedeni", t.neden + ". " + t.nedenMetin) +
       satir("Mezarı", t.mezar) +
       satir("Sicili", t.sicil) +
+      satir("Hastalıkları", t.hastalik) +
+      satir("Zindan", t.zindan) +
       satir("Terekesi", `${t.lira} Koloni Lirası, ${t.fis} Nizam fişi`) +
       `</dl>`
     const muhur = t.kalan
