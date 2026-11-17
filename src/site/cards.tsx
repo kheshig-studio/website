@@ -1,9 +1,12 @@
 import { Arrow, Label, cx } from "./ui"
-import { productHref, type Game, type Product } from "./data"
+import { GAME_STATUS_EN, localGame, localProduct, productHref, type Game, type Product } from "./data"
+import { isEn, t } from "./i18n"
 
-export function ProductCard({ p, free }: { p: Product; free?: boolean }) {
+export function ProductCard({ p: raw, free }: { p: Product; free?: boolean }) {
+  const p = localProduct(raw, isEn)
   // Yalnızca başka siteye giden linkler yeni sekmede açılır (sitedeki araçlar aynı sekmede).
-  const external = Boolean(p.href?.startsWith("http"))
+  const link = productHref(p, isEn)
+  const external = link.startsWith("http")
   return (
     <article
       id={p.slug}
@@ -17,6 +20,18 @@ export function ProductCard({ p, free }: { p: Product; free?: boolean }) {
           </Label>
         )}
       </div>
+      {p.image && (
+        <div className="-mx-2 mt-5 overflow-hidden rounded-xl border border-line bg-night sm:-mx-3">
+          <img
+            src={p.image.src}
+            alt={p.image.alt}
+            width={p.image.width}
+            height={p.image.height}
+            loading="lazy"
+            className="block h-auto w-full"
+          />
+        </div>
+      )}
       <h3 className="mt-6 text-3xl font-bold tracking-[-0.02em]">{p.name}</h3>
       <p className="mt-2 text-lg font-medium leading-snug">{p.tagline}</p>
       <p className="mt-4 leading-relaxed text-ink-soft">{p.description}</p>
@@ -30,14 +45,14 @@ export function ProductCard({ p, free }: { p: Product; free?: boolean }) {
       </ul>
       <div className="mt-auto flex flex-wrap items-center justify-between gap-4 pt-8">
         <span className="font-display text-2xl font-bold tracking-[-0.02em]">
-          {free ? "Ücretsiz" : (p.price ?? "Fiyat için yazın")}
+          {free ? t("Ücretsiz", "Free") : (p.price ?? t("Fiyat için yazın", "Ask for price"))}
         </span>
         <a
-          href={productHref(p)}
+          href={link}
           {...(external ? { target: "_blank", rel: "noreferrer noopener" } : {})}
           className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-[15px] font-medium text-paper transition-colors hover:bg-brand"
         >
-          {p.cta ?? "Satın al"} <Arrow />
+          {p.cta ?? t("Satın al", "Buy")} <Arrow />
           <span className="sr-only"> — {p.name}</span>
         </a>
       </div>
@@ -51,7 +66,8 @@ const STATUS_STYLE: Record<Game["status"], string> = {
   "Yapım aşamasında": "border border-dashed border-ink/40 text-ink-soft",
 }
 
-export function GameCard({ g }: { g: Game }) {
+export function GameCard({ g: raw }: { g: Game }) {
+  const g = localGame(raw, isEn)
   return (
     <article
       id={g.slug}
@@ -72,7 +88,7 @@ export function GameCard({ g }: { g: Game }) {
             <span className="font-display text-6xl font-bold tracking-[-0.04em] text-ink/15">
               {g.name}
             </span>
-            <Label className="text-ink-soft">{g.play ? "Tarayıcıda" : "Yakında"}</Label>
+            <Label className="text-ink-soft">{g.play ? t("Tarayıcıda", "In browser") : t("Yakında", "Coming soon")}</Label>
           </div>
         )}
       </div>
@@ -80,7 +96,7 @@ export function GameCard({ g }: { g: Game }) {
         <div className="flex flex-wrap items-center gap-3">
           <Label className="text-ink-soft">{g.platform}</Label>
           <Label className={cx("rounded-full px-2.5 py-1", STATUS_STYLE[g.status])}>
-            {g.status}
+            {t(g.status, GAME_STATUS_EN[g.status])}
           </Label>
         </div>
         <h3 className="mt-5 text-3xl font-bold tracking-[-0.02em] sm:text-4xl">{g.name}</h3>
@@ -92,7 +108,7 @@ export function GameCard({ g }: { g: Game }) {
                 href={g.play}
                 className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-[15px] font-medium text-paper transition-colors hover:bg-brand"
               >
-                Tarayıcıda oyna <Arrow />
+                {t("Tarayıcıda oyna", "Play in browser")} <Arrow />
               </a>
             )}
             {g.store && (

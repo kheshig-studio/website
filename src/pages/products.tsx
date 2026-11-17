@@ -1,28 +1,37 @@
 import { mount } from "@/site/mount"
 import { Layout } from "@/site/Layout"
-import { Arrow, Container, Label } from "@/site/ui"
+import { Arrow, Container, PageHeader } from "@/site/ui"
 import { ProductCard } from "@/site/cards"
-import { JOB_MAIL, PAID } from "@/site/data"
+import { PAID } from "@/site/data"
+import { href, t } from "@/site/i18n"
+
+const hasCheckout = PAID.some((p) => p.buy)
 
 function Products() {
   return (
     <Layout>
-      <header className="border-b border-line">
-        <Container className="pb-14 pt-16 sm:pb-20 sm:pt-24">
-          <Label className="text-brand">Satılık programlar</Label>
-          <h1 className="mt-5 max-w-4xl text-[2.6rem] font-bold leading-[1.02] tracking-[-0.03em] sm:text-7xl">
-            Vaat değil, çalışan araçlar.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-soft">
-            Her birini önce kendim kullandım. Masaüstü araçlar tek dosya olarak
-            gelir — Python, kütüphane ya da kurulum gerekmez. Satın almak ya da
-            soru sormak için butona basın, e-postanız hazır açılır.
-          </p>
-        </Container>
-      </header>
+      <PageHeader
+        label={t("Satılık programlar", "Products")}
+        title={t("Vaat değil, çalışan araçlar.", "Not promises — working tools.")}
+        intro={
+          t(
+            "Her birini önce kendim kullandım. Masaüstü araçlar tek dosya olarak gelir — Python, kütüphane ya da kurulum gerekmez. ",
+            "I used every one of these myself first. Desktop tools come as a single file — no Python, no libraries, no installer. ",
+          ) +
+          (hasCheckout
+            ? t(
+                "Satın al'a basınca Shopier'in güvenli ödeme sayfası açılır; ödeme biter bitmez lisans anahtarınız ve indirme bağlantısı e-postanıza gelir.",
+                "Buy opens a secure checkout; as soon as payment goes through, your license key and download link arrive by email. Prices are in Turkish lira (₺).",
+              )
+            : t(
+                "Satın almak ya da soru sormak için butona basın, e-postanız hazır açılır.",
+                "To buy or ask a question, press the button and a pre-filled email opens. Prices are in Turkish lira (₺).",
+              ))
+        }
+      />
 
       <Container className="py-16 sm:py-20">
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-2">
           {PAID.map((p) => (
             <ProductCard key={p.slug} p={p} />
           ))}
@@ -30,16 +39,19 @@ function Products() {
 
         <aside className="mt-5 flex flex-col justify-between gap-6 rounded-2xl border border-dashed border-ink/30 p-7 sm:flex-row sm:items-center sm:p-9">
           <div>
-            <h2 className="text-2xl font-bold tracking-[-0.02em]">Aradığınız burada yok mu?</h2>
+            <h2 className="text-2xl font-bold tracking-[-0.02em]">{t("Aradığınız burada yok mu?", "Don't see what you need?")}</h2>
             <p className="mt-2 max-w-xl leading-relaxed text-ink-soft">
-              Size özel bir bot ya da araç yazabilirim. Ne yapması gerektiğini anlatın.
+              {t(
+                "Size özel bir bot ya da araç yazabilirim. Ne yapması gerektiğini anlatın.",
+                "I can build a custom bot or tool for you. Tell me what it should do.",
+              )}
             </p>
           </div>
           <a
-            href={JOB_MAIL}
+            href={href("contact")}
             className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-ink px-5 text-[15px] font-medium transition-colors hover:bg-ink hover:text-paper"
           >
-            Özel yazılım iste <Arrow />
+            {t("Özel yazılım iste", "Request custom software")} <Arrow />
           </a>
         </aside>
       </Container>

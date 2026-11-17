@@ -7,6 +7,34 @@ import { defineConfig, minify, transformWithOxc, type Plugin } from "vite"
 const page = (p: string) => fileURLToPath(new URL(p, import.meta.url))
 
 /**
+ * Cloudflare Web Analytics (çerezsiz ziyaretçi istatistiği).
+ * Cloudflare → Analytics & Logs → Web Analytics → kheshig.studio → JS snippet içindeki
+ * "token" değerini buraya yaz. Boşken siteye hiçbir kod eklenmez. Token gizli değildir.
+ */
+const CF_ANALYTICS_TOKEN = ""
+
+function analytics(): Plugin {
+  return {
+    name: "kheshig:analytics",
+    apply: "build",
+    transformIndexHtml() {
+      if (!CF_ANALYTICS_TOKEN) return []
+      return [
+        {
+          tag: "script",
+          attrs: {
+            defer: true,
+            src: "https://static.cloudflareinsights.com/beacon.min.js",
+            "data-cf-beacon": JSON.stringify({ token: CF_ANALYTICS_TOKEN }),
+          },
+          injectTo: "body",
+        },
+      ]
+    },
+  }
+}
+
+/**
  * src/tools/tweet-sil.ts → küçültülmüş tek parça JS.
  * Sayfa bunu `import { code } from "virtual:tweet-sil"` ile alır ve
  * bookmarklet + konsol kodu olarak gösterir. Araç x.com içinde
@@ -37,7 +65,7 @@ function tweetSilTool(): Plugin {
 // GitHub Pages /hakkimda/ adresini hakkimda/index.html olarak sunar.
 // Yeni sayfa eklerken buraya da bir satır ekle.
 export default defineConfig({
-  plugins: [react(), tailwindcss(), tweetSilTool()],
+  plugins: [react(), tailwindcss(), tweetSilTool(), analytics()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -53,6 +81,13 @@ export default defineConfig({
         hakkimda: page("./hakkimda/index.html"),
         iletisim: page("./iletisim/index.html"),
         tweetsil: page("./tweet-sil/index.html"),
+        // İngilizce site: aynı bileşenler, <html lang="en">
+        en_home: page("./en/index.html"),
+        en_products: page("./en/products/index.html"),
+        en_free: page("./en/free/index.html"),
+        en_games: page("./en/games/index.html"),
+        en_about: page("./en/about/index.html"),
+        en_contact: page("./en/contact/index.html"),
         notfound: page("./404.html"),
       },
     },

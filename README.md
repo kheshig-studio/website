@@ -41,3 +41,28 @@ Yeni sayfa için: klasör + `index.html` aç, `src/pages/` altına bileşen yaz,
 - **Tarayıcıda oynanan oyun:** oyunun klasörünü (içinde `index.html` olan) `public/oyunlar/<slug>/`
   altına kopyala, `GAMES` listesine kayıt ekle ve `play: "/oyunlar/<slug>/"` yaz.
   Kart otomatik olarak "Tarayıcıda oyna" butonu gösterir.
+- **Satın al butonu:** ürüne `buy: "<Shopier ürün linki>"` ekle. Ödeme sonrası key'i lisans
+  sunucusu (kheshig-lisans) otomatik üretip müşteriye mailler; panelde Shopier ürün
+  numarasının eşlenmiş olması gerekir.
+- **Ekran görüntüsü:** `public/gorseller/` altına koy, kayda `image` alanı ekle.
+
+## İngilizce site (`/en/`)
+
+Aynı bileşenler iki dilde çalışır; dil `<html lang>` etiketinden okunur (`src/site/i18n.ts`).
+
+- Metin: bileşende `t("Türkçe", "English")`.
+- Ürün / oyun: `data.ts` içindeki kayda `en: { tagline, description, … }` ekle. Boş bırakılan
+  alan Türkçesiyle görünür.
+- Sayfa adresleri `i18n.ts` → `ROUTES` içinde (`/urunler/` ↔ `/en/products/`). Yeni sayfada
+  oraya da ekle, `en/<ad>/index.html` oluştur (`lang="en"`) ve `vite.config.ts`'e gir.
+
+## Ziyaretçi istatistiği
+
+`vite.config.ts` içindeki `CF_ANALYTICS_TOKEN` satırına Cloudflare Web Analytics token'ını yaz.
+Boşken siteye hiçbir kod eklenmez.
+
+## İletişim formu
+
+Form `api.kheshig.studio/v1/contact` adresine gönderir (kheshig-lisans Worker'ı). Mesajlar
+panelin **Mesajlar** sekmesinde de durur. Yerelde denemek için:
+`VITE_API_BASE=http://localhost:8787 npm run build`
