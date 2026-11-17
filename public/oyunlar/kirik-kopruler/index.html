@@ -56,7 +56,12 @@
   .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); margin: 0 0 12px; }
   h1 { font-family: var(--display); font-weight: 700; font-size: clamp(40px, 9vw, 64px); line-height: .95; letter-spacing: -.02em; margin: 0 0 20px; }
   .lede { font-size: 18px; color: var(--ink-2); max-width: 34em; margin: 0 0 16px; }
-  .odds { margin: 28px 0 32px; border-top: 1px solid var(--rule); }
+  .odds { margin: 32px 0 0; border-top: 1px solid var(--rule); }
+  .lore { margin: 28px 0 28px; padding: 18px 20px; background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--red); }
+  .lore p { margin: 0 0 10px; font-size: 15.5px; color: var(--ink-2); }
+  .lore p:last-child { margin-bottom: 0; }
+  .lore b { color: var(--ink); font-weight: 600; }
+  .lore .eyebrow { margin-bottom: 10px; color: var(--red); }
   .odds-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
   .odds-row span:last-child { font-family: var(--mono); color: var(--ink-2); }
   .odds-cap { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 10px 0 6px; }
@@ -122,11 +127,11 @@
   .dock .row { display: flex; gap: 10px; }
   .dock .btn { flex: 1; }
   .dock .btn.ghost { flex: 0 0 auto; }
-  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .tab {
     appearance: none; border: 1px solid var(--rule); background: var(--card); border-radius: 2px;
     font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
-    padding: 10px 6px; min-height: 42px; cursor: pointer;
+    padding: 10px 4px; min-height: 42px; cursor: pointer;
   }
   .tab:hover { border-color: var(--ink); }
   .tab:focus-visible, .chip:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
@@ -260,8 +265,15 @@
   <main id="giris" class="wrap intro">
     <p class="eyebrow">Kırık Köprüler · Nüfus Defteri</p>
     <h1>Kim olarak doğacağını sen seçmezsin.</h1>
-    <p class="lede">Çöküş'ün üzerinden 120 yıl geçti. Boğazları Nizam tutuyor. Yukarıda Hisar var, aşağıda sisin altında Alt Şehir.</p>
-    <p class="lede">Rastgele bir hayata doğacaksın. Yıl yıl yaşayacaksın: okula gidip gitmeyeceğine, hangi kapıyı çalacağına, ailenle ne kadar ilgileneceğine sen karar vereceksin. Öldüğünde İntizam Heyeti hayatını bir tutanağa geçirecek.</p>
+    <p class="lede">Rastgele bir hayata doğacak ve yıl yıl yaşayacaksın. Okula gidip gitmeyeceğine, hangi kapıyı çalacağına, paranı neye harcayacağına ve ailenle ne kadar ilgileneceğine sen karar vereceksin. Öldüğünde İntizam Heyeti hayatını bir tutanağa geçirecek.</p>
+    <section class="lore" aria-labelledby="loreBaslik">
+      <p class="eyebrow" id="loreBaslik">Dünya</p>
+      <p>Yaklaşık 120 yıl önce eski dünya çöktü. Savaşlar, salgınlar ve kıtlıklar on yıllarca birbirini izledi; bugün o döneme <b>Uzun Karanlık</b> deniyor. Geriye asit yağmurları, zehirli bir Boğaz ve yarı yıkık şehirler kaldı.</p>
+      <p>Boğazları bugün <b>Boğaz Nizamı</b> tutuyor. Resmî adı bu, ama halk ona <b>Cunta</b> der. Nizam'ın askerlerine nefer denir. Neferler orduya girerken adlarını bırakır, yakalarında yalnızca bir numara taşırlar.</p>
+      <p>Yukarıda, yamaçtaki <b>Hisar</b>'da subaylar, memurlar ve soylular rahat yaşar. Aşağıda, sisin altındaki <b>Alt Şehir</b>'de herkes hayatta kalmaya çalışır. Daha da aşağıda, lağımlarda <b>Kalanlar</b> yaşar; yukarıdakiler onlara "Yeşil" der.</p>
+      <p>Pazarda iki para geçer: Ege'deki koloni devletinin bastığı <b>Koloni Lirası</b> ve Nizam'ın neredeyse değersiz <b>fişi</b>.</p>
+    </section>
+    <button class="btn" id="dogBtn" type="button">Doğ</button>
     <div class="odds" aria-label="Doğum olasılıkları">
       <div class="odds-cap">Nerede doğarsın</div>
       <div class="odds-row"><span>Alt Şehir, D Sektörü (en aşağı)</span><span>%28</span></div>
@@ -273,7 +285,6 @@
       <div class="odds-row"><span>Göçmen damları</span><span>%2</span></div>
       <div class="odds-row"><span>Lağım</span><span>%1</span></div>
     </div>
-    <button class="btn" id="dogBtn" type="button">Doğ</button>
     <p class="foot">Alt Şehir'de ortalama ömür 45 yıl, Hisar'da 65. Bebeklerin bir kısmı beş yaşını göremez. Ölüm olasılıkları Kırık Köprüler dünya kitabından gelir.<br>Bir <a href="/">Kheshig Studio</a> oyunu.</p>
   </main>
 

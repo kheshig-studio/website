@@ -44,7 +44,7 @@
     const bas = KK.basamakAd(p)
     $("idAlt").textContent = `${yerAd} · ${bas}${p.kanat ? " · " + p.kanat : ""} · ${meslek}`
     let h = bar("Sağlık", p.saglik) + bar("Ciğer", p.ciger) + bar("Umut", p.umut)
-    h += p.yosun > 0 ? bar("Yosun", p.yosun, true) : `<div class="stat"><div class="stat-k"><span>Okuma</span><b>${p.okur ? "var" : "yok"}</b></div></div>`
+    h += p.yosun > 0 ? bar("Yosun", p.yosun, true) : `<div class="stat"><div class="stat-k"><span>Okur yazar</span><b>${p.okur ? "evet" : "hayır"}</b></div></div>`
     $("stats").innerHTML = h
     $("money").innerHTML = `<span>Koloni Lirası <b>${p.lira}</b></span><span>Nizam fişi <b>${p.fis}</b></span><span>Sicil <b>${KK.sicilAd(p.sicil)}</b></span>`
   }
@@ -138,6 +138,7 @@
       `<button class="tab" type="button" data-panel="aile">Aile</button>` +
       `<button class="tab" type="button" data-panel="is">İş</button>` +
       `<button class="tab" type="button" data-panel="etk">Etkinlik</button>` +
+      `<button class="tab" type="button" data-panel="pazar">Pazar</button>` +
       `</div><div class="row"><button class="btn" type="button" id="yilBtn">Bir yıl yaşa</button><button class="btn ghost" type="button" id="besBtn" title="Bir karar ya da dönüm noktası gelirse durur">5 yıl</button></div></div>`
     d.querySelectorAll("[data-panel]").forEach((b) => (b.onclick = () => panelAc(b.dataset.panel)))
     $("yilBtn").onclick = () => ilerle(1)
@@ -217,6 +218,16 @@
       ic.querySelectorAll("[data-is]").forEach((b) => (b.onclick = () => sonuc(KK.basvur(p, b.dataset.is))))
       const ib = $("istifaBtn")
       if (ib) ib.onclick = () => sonuc(KK.istifa(p))
+    } else if (acikPanel === "pazar") {
+      $("sheetBaslik").textContent = "Pazar"
+      const l = KK.pazar(p)
+      const acik = l.filter((x) => x.uygun)
+      const kapali = l.filter((x) => !x.uygun)
+      let h = `<p class="kisi-not">Cebinde <b>${p.lira}</b> Koloni Lirası var.${p.filtre ? ` Yedek filtren: ${p.filtre}.` : ""}${p.bayrak.oda ? " Kirada oturuyorsun (yılda 12 lira)." : ""}</p>`
+      h += acik.length ? acik.map((x) => `<div class="satir-is"><div><b>${esc(x.ad)}</b><small>${x.fiyat} lira · ${esc(x.bilgi)}</small></div><button type="button" class="chip" data-al="${x.id}">Al</button></div>`).join("") : `<p class="bos">Bu yıl alabileceğin bir şey yok.</p>`
+      if (kapali.length) h += `<details class="kapali"><summary>Şimdilik olmaz (${kapali.length})</summary>${kapali.map((x) => `<div class="satir-is kapali-is"><div><b>${esc(x.ad)}</b><small>${x.fiyat} lira · ${esc(x.sebep)}</small></div></div>`).join("")}</details>`
+      ic.innerHTML = h
+      ic.querySelectorAll("[data-al]").forEach((b) => (b.onclick = () => sonuc(KK.satinAl(p, b.dataset.al))))
     } else if (acikPanel === "etk") {
       $("sheetBaslik").textContent = "Etkinlik"
       const l = KK.etkinlikler(p)
@@ -250,6 +261,7 @@
       satir("Doğumu", t.dogum) +
       satir("Basamağı", t.basamak) +
       satir("İnancı", t.inanc) +
+      satir("Huyu", t.huy) +
       satir("Öğrenimi", t.okur) +
       satir("Mesleği", t.meslek) +
       satir("Medeni hâli", t.medeni) +
@@ -270,7 +282,7 @@
       `<p class="eyebrow">Hayat sona erdi</p>` +
       `<article class="doc${t.kalan ? " kayityok" : ""}">${baslik}${muhur}${alanlar}${not}${hayat}</article>` +
       kalanNot +
-      `<div class="compare" id="kiyas"><span class="t-sessiz">Aynı yerde doğan 1200 hayat hesaplanıyor…</span></div>` +
+      `<div class="compare" id="kiyas"><span class="t-sessiz">Senin doğduğun yerde doğan 1200 hayat hesaplanıyor…</span></div>` +
       `<div class="end-actions"><button class="btn" type="button" id="yeniBtn">Yeniden doğ</button><button class="btn ghost" type="button" id="kopyaBtn">Tutanağı kopyala</button></div>` +
       `<div class="toast" id="toast" role="status"></div>` +
       `<p class="foot">Kırık Köprüler bir evren: aynı dünyada geçen farklı oyunlar. Bir <a href="/">Kheshig Studio</a> oyunu · <a href="/oyunlar/">Diğer oyunlar</a></p>`
@@ -282,7 +294,9 @@
       const k = KK.kiyas(p)
       tutanakVeri.kiyas = k
       const yerAd = k.yerAd.charAt(0).toLocaleUpperCase("tr") + k.yerAd.slice(1)
-      $("kiyas").innerHTML = `<b>100 kişiden ${k.yuzdeKisa}'${ekAyir(k.yuzdeKisa)}</b>${esc(yerAd)} doğanların ${k.yuzdeKisa}'${ekAyir(k.yuzdeKisa)} senden kısa yaşadı. Orada ortalama ömür ${k.ortalama} yıl; doğanların %${k.bebek}'${ekAyir(k.bebek)} beş yaşını göremedi. Sen ${p.yas} yıl yaşadın.`
+      const ek = ekAyir(k.yuzdeKisa)
+      const ayrilma = ek + "nd" + (/[ıu]/.test(ek) ? "a" : "e") + "n"
+      $("kiyas").innerHTML = `<b>Yaşıtlarının %${k.yuzdeKisa}'${ayrilma} uzun yaşadın.</b>${esc(yerAd)} doğan her 100 kişiden ${k.yuzdeKisa}'${ek} senden önce öldü. Orada ortalama ömür ${k.ortalama} yıl ve her 100 bebekten ${k.bebek}'${ekAyir(k.bebek)} beş yaşını göremiyor. Sen ${p.yas} yıl yaşadın.`
     }, 60)
   }
 
@@ -307,7 +321,7 @@
     L.push("Ölümü: " + t.olum + " · " + t.neden)
     L.push("Mezarı: " + t.mezar)
     if (t.hayat.length) L.push("— " + t.hayat.join("\n— "))
-    if (k) L.push(`Aynı yerde doğan 100 kişiden ${k.yuzdeKisa}'${ekAyir(k.yuzdeKisa)} daha kısa yaşadı.`)
+    if (k) L.push(`Doğduğum yerde doğan her 100 kişiden ${k.yuzdeKisa}'${ekAyir(k.yuzdeKisa)} benden önce öldü.`)
     L.push(location.origin + location.pathname)
     return L.join("\n")
   }
