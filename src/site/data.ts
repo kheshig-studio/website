@@ -386,13 +386,13 @@ export const GAMES: Game[] = [
     platform: "Tarayıcı",
     status: "Oynanabilir",
     description:
-      "Seni izleyen ve öğrenen bir rakibe karşı hızlı, 1v1 bir nişancı. Kâğıt ve mürekkepten arenalarda koşuyor, kayıp zıplayarak hız biriktiriyor, duvarlarda koşuyor ve atılıyorsun. Elinde tam otomatik bir tüfek ve bir pompalı var. Nöbetçi hangi koridordan geldiğini, çatışmada hangi yöne kaçtığını, hangi silahı ne zaman çektiğini not ediyor ve her raunt sana göre biraz daha iyi hazırlanıyor. Ne öğrendiğini raunt aralarında söylüyor; defterini tarayıcında saklıyor. İki harita ve üç zorluk seviyesi var. 5 raundu ilk alan kazanır. Klavye ve fare gerekir. Erken prototip.",
+      "Seni izleyen ve öğrenen bir rakibe karşı hızlı, 1v1 bir nişancı. Kâğıt ve mürekkepten arenalarda koşuyor, kayıp zıplayarak hız biriktiriyor, duvarlarda koşuyor ve atılıyorsun. Altı silah var (tüfek, burst, SMG, pompalı, keskin nişancı, tabanca); maçtan önce ikisini seçiyorsun. Nöbetçi hangi koridordan geldiğini, çatışmada hangi yöne kaçtığını, hangi silahı ne zaman çektiğini not ediyor ve her raunt sana göre biraz daha iyi hazırlanıyor. Ne öğrendiğini raunt aralarında söylüyor; defterini tarayıcında saklıyor. İki harita, üç zorluk ve beş mod var: Klasik, kaybedene kadar süren Seri, 3 canlı sonsuz mod, Tek Mermi ve Silah Rotasyonu. Klavye ve fare gerekir. Erken prototip.",
     play: "/oyunlar/nobetci/",
     en: {
       name: "Nöbetçi (Sentinel)",
       platform: "Browser",
       description:
-        "A fast 1v1 shooter against an opponent that watches and learns you. You sprint, slide-hop to build speed, wall-run and dash through arenas of paper and ink, with a full-auto rifle and a shotgun. The Sentinel notes which lane you take, which way you dodge, which weapon you pull and when, and it prepares a little better for you every round. Between rounds it tells you what it learned, and it keeps its notebook in your browser. Two maps, three difficulty levels. First to 5 rounds wins. Needs a keyboard and mouse. Early prototype.",
+        "A fast 1v1 shooter against an opponent that watches and learns you. You sprint, slide-hop to build speed, wall-run and dash through arenas of paper and ink, with six weapons (rifle, burst, SMG, shotgun, sniper, pistol) and a two-weapon loadout. The Sentinel notes which lane you take, which way you dodge, which weapon you pull and when, and it prepares a little better for you every round. Between rounds it tells you what it learned, and it keeps its notebook in your browser. Two maps, three difficulties and five modes: Classic, an endless Streak run, endless 3 Lives, One Shot and Weapon Rotation. Needs a keyboard and mouse. Early prototype.",
     },
   },
 ]
