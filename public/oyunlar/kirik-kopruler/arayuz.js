@@ -330,6 +330,7 @@
       satir("Sicili", t.sicil) +
       satir("Hastalıkları", t.hastalik) +
       satir("Zindan", t.zindan) +
+      satir("Suçları", t.suclar) +
       satir("Çetesi", t.cete) +
       satir("Eşyaları", t.esyalar) +
       satir("Terekesi", `${t.lira} Koloni Lirası, ${t.fis} Nizam fişi`) +
