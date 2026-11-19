@@ -41,10 +41,10 @@
     $("idYas").textContent = `${p.yas} yaş · ÇS ${p.yil}`
     const meslek = p.meslek ? KK.MESLEK[p.meslek].ad : p.yas < 14 ? "çocuk" : "işsiz"
     const yerAd = p.yer === "gocmen" ? "Göçmen damları" : Y.ad
-    const bas = KK.basamakAd(p)
-    $("idAlt").textContent = `${yerAd} · ${bas}${p.kanat ? " · " + p.kanat : ""} · ${meslek}`
+    const aile = { 0: "Kalan", 1: "soylu bir aileden", 2: "memur bir aileden", 3: "nefer ya da polis ailesinden", 4: p.dogumYeri === "koy" ? "köylü bir aileden" : "halktan bir aileden", 5: "kayıtsız bir aileden" }[p.basamak]
+    $("idAlt").textContent = `${yerAd} · ${meslek} · ${aile}${p.kanat ? " (" + p.kanat + ")" : ""}${p.inanc ? " · " + p.inanc : ""}`
     let h = bar("Sağlık", p.saglik) + bar("Ciğer", p.ciger) + bar("Umut", p.umut)
-    h += p.yosun > 0 ? bar("Yosun", p.yosun, true) : `<div class="stat"><div class="stat-k"><span>Okur yazar</span><b>${p.okur ? "evet" : "hayır"}</b></div></div>`
+    h += p.yosun > 0 ? bar("Yosun", p.yosun, true) : p.yer === "hisar" ? bar("Nüfuz", p.nufuz || 0) : `<div class="stat"><div class="stat-k"><span>Okur yazar</span><b>${p.okur ? "evet" : "hayır"}</b></div></div>`
     $("stats").innerHTML = h
     const dr = KK.durum(p)
     $("durum").innerHTML = dr.map((x) => `<span class="etiket${/Zindan/.test(x) ? " zindan" : ""}">${esc(x)}</span>`).join("")
@@ -85,10 +85,33 @@
   }
 
   /* ── ilerleme ───────────────────────────────────────────── */
+  function anlik() {
+    return { "Sağlık": p.saglik, "Ciğer": p.ciger, "Umut": p.umut, "Lira": p.lira, "Fiş": p.fis, "Yosun": p.yosun, "Nüfuz": p.nufuz || 0, sicil: p.sicil }
+  }
+  function fark(once) {
+    const simdi = anlik()
+    const l = []
+    for (const k in simdi) {
+      if (k === "sicil") continue
+      const d = Math.round(simdi[k]) - Math.round(once[k])
+      if (d) l.push(`${k} ${d > 0 ? "+" : "−"}${Math.abs(d)}`)
+    }
+    if (simdi.sicil !== once.sicil) l.push(`Sicil: ${KK.sicilAd(simdi.sicil)}`)
+    return l.join(" · ")
+  }
+
   function birYil() {
     if (!p || p.olu || bekleyenSecim) return { dur: true }
+    const once = anlik()
     const r = KK.yil(p)
-    yilEkle(r.satirlar, p.yas, p.yil)
+    const li = yilEkle(r.satirlar, p.yas, p.yil)
+    const fk = fark(once)
+    if (fk && !r.olu) {
+      const pe = document.createElement("p")
+      pe.className = "t-fark"
+      pe.textContent = fk
+      li.querySelector("div:last-child").appendChild(pe)
+    }
     if (r.secim) bekleyenSecim = r.secim
     const donum = r.satirlar.some((s) => s.tur === "donum")
     return { dur: r.olu || !!r.secim || donum, olu: r.olu }
@@ -106,9 +129,12 @@
 
   function sec(i) {
     if (!bekleyenSecim) return
+    const once = anlik()
     const r = KK.secimYap(p, bekleyenSecim.id, i)
     bekleyenSecim = null
     satirEkleSon(r.metin, r.tur === "kotu" ? "kotu" : "secim")
+    const fk = fark(once)
+    if (fk) satirEkleSon(fk, "fark")
     kimlik()
     dock()
     asagiKaydir()
@@ -141,6 +167,7 @@
       `<button class="tab" type="button" data-panel="is">İş</button>` +
       `<button class="tab" type="button" data-panel="etk">Etkinlik</button>` +
       `<button class="tab" type="button" data-panel="pazar">Pazar</button>` +
+      `<button class="tab" type="button" data-panel="esya">Eşya</button>` +
       `</div><div class="row"><button class="btn" type="button" id="yilBtn">Bir yıl yaşa</button><button class="btn ghost" type="button" id="besBtn" title="Bir karar ya da dönüm noktası gelirse durur">5 yıl</button></div></div>`
     d.querySelectorAll("[data-panel]").forEach((b) => (b.onclick = () => panelAc(b.dataset.panel)))
     $("yilBtn").onclick = () => ilerle(1)
@@ -172,11 +199,20 @@
     asagiKaydir()
   }
 
-  function sonuc(r) {
+  function islem(fn) {
+    const once = anlik()
+    const r = fn()
+    sonuc(r, fark(once))
+  }
+
+  function sonuc(r, fk) {
     const el = $("sheetSonuc")
-    el.textContent = r.metin
+    el.innerHTML = esc(r.metin) + (fk ? `<span class="sonuc-fark">${esc(fk)}</span>` : "")
     el.className = "sheet-sonuc" + (r.tur ? " t-" + r.tur : "")
-    if (r.tur !== "sessiz") satirEkleSon(r.metin, r.tur === "kotu" ? "kotu" : r.tur === "iyi" ? "iyi" : r.tur === "donum" ? "donum" : "secim")
+    if (r.tur !== "sessiz") {
+      satirEkleSon(r.metin, r.tur === "kotu" ? "kotu" : r.tur === "iyi" ? "iyi" : r.tur === "donum" ? "donum" : "secim")
+      if (fk) satirEkleSon(fk, "fark")
+    }
     kimlik()
     panelCiz()
   }
@@ -203,7 +239,7 @@
             )
           }).join("")
         : `<p class="bos">Kimsen yok.</p>`
-      ic.querySelectorAll(".chip").forEach((b) => (b.onclick = () => sonuc(KK.aileEylem(p, +b.dataset.k, b.dataset.e))))
+      ic.querySelectorAll(".chip").forEach((b) => (b.onclick = () => islem(() => KK.aileEylem(p, +b.dataset.k, b.dataset.e))))
     } else if (acikPanel === "is") {
       $("sheetBaslik").textContent = "İş"
       const d = KK.isler(p)
@@ -217,30 +253,49 @@
       }
       if (kapali.length) h += `<details class="kapali"><summary>Kapalı kapılar (${kapali.length})</summary>${kapali.map((x) => `<div class="satir-is kapali-is"><div><b>${esc(x.ad)}</b><small>${esc(x.sebep || d.kilit || "")}</small></div></div>`).join("")}</details>`
       ic.innerHTML = h
-      ic.querySelectorAll("[data-is]").forEach((b) => (b.onclick = () => sonuc(KK.basvur(p, b.dataset.is))))
+      ic.querySelectorAll("[data-is]").forEach((b) => (b.onclick = () => islem(() => KK.basvur(p, b.dataset.is))))
       const ib = $("istifaBtn")
-      if (ib) ib.onclick = () => sonuc(KK.istifa(p))
+      if (ib) ib.onclick = () => islem(() => KK.istifa(p))
     } else if (acikPanel === "pazar") {
       $("sheetBaslik").textContent = "Pazar"
       const l = KK.pazar(p)
-      const acik = l.filter((x) => x.uygun)
-      const kapali = l.filter((x) => !x.uygun)
-      let h = `<p class="kisi-not">Cebinde <b>${p.lira}</b> Koloni Lirası var.${p.filtre ? ` Yedek filtren: ${p.filtre}.` : ""}${p.bayrak.oda ? " Kirada oturuyorsun (yılda 12 lira)." : ""}</p>`
-      h += acik.length ? acik.map((x) => `<div class="satir-is"><div><b>${esc(x.ad)}</b><small>${x.fiyat} lira · ${esc(x.bilgi)}</small></div><button type="button" class="chip" data-al="${x.id}">Al</button></div>`).join("") : `<p class="bos">Bu yıl alabileceğin bir şey yok.</p>`
-      if (kapali.length) h += `<details class="kapali"><summary>Şimdilik olmaz (${kapali.length})</summary>${kapali.map((x) => `<div class="satir-is kapali-is"><div><b>${esc(x.ad)}</b><small>${x.fiyat} lira · ${esc(x.sebep)}</small></div></div>`).join("")}</details>`
+      let h = `<p class="kisi-not">Cebinde <b>${p.lira} Koloni Lirası</b> var. Pazarda fiş geçmez; fiyatlar liradır. "Eşyalarına gider" yazanlar Eşya bölümünde durur, istediğin zaman kullanırsın.</p>`
+      h += kategorili(l, (x) => `<div class="satir-is${x.uygun ? "" : " kapali-is"}"><div><b>${esc(x.ad)} <span class="fiyat">${x.fiyat} lira</span></b><small>${esc(x.etki)}</small>${x.uygun ? "" : `<small class="neden">${esc(x.sebep)}</small>`}</div>${x.uygun ? `<button type="button" class="chip" data-al="${x.id}">Al</button>` : ""}</div>`)
       ic.innerHTML = h
-      ic.querySelectorAll("[data-al]").forEach((b) => (b.onclick = () => sonuc(KK.satinAl(p, b.dataset.al))))
+      ic.querySelectorAll("[data-al]").forEach((b) => (b.onclick = () => islem(() => KK.satinAl(p, b.dataset.al))))
     } else if (acikPanel === "etk") {
       $("sheetBaslik").textContent = "Etkinlik"
       const l = KK.etkinlikler(p)
-      const acik = l.filter((e) => e.uygun)
-      const kapali = l.filter((e) => !e.uygun)
-      let h = `<p class="kisi-not">Her etkinliği yılda bir kez yapabilirsin.</p>`
-      h += acik.length ? acik.map((e) => `<div class="satir-is"><div><b>${esc(e.ad)}</b><small>${esc(e.bilgi)}</small></div><button type="button" class="chip" data-etk="${e.id}">Yap</button></div>`).join("") : `<p class="bos">Bu yıl yapabileceğin bir şey kalmadı.</p>`
-      if (kapali.length) h += `<details class="kapali"><summary>Şimdilik olmaz (${kapali.length})</summary>${kapali.map((e) => `<div class="satir-is kapali-is"><div><b>${esc(e.ad)}</b><small>${esc(e.sebep)}</small></div></div>`).join("")}</details>`
+      let h = `<p class="kisi-not">Her etkinliği yılda bir kez yapabilirsin. Altındaki satır ne olacağını söyler.</p>`
+      h += kategorili(l, (e) => `<div class="satir-is${e.uygun ? "" : " kapali-is"}"><div><b>${esc(e.ad)}</b><small>${esc(e.etki)}</small>${e.uygun ? "" : `<small class="neden">${esc(e.sebep)}</small>`}</div>${e.uygun ? `<button type="button" class="chip" data-etk="${e.id}">Yap</button>` : ""}</div>`)
       ic.innerHTML = h
-      ic.querySelectorAll("[data-etk]").forEach((b) => (b.onclick = () => sonuc(KK.etkinlik(p, b.dataset.etk))))
+      ic.querySelectorAll("[data-etk]").forEach((b) => (b.onclick = () => islem(() => KK.etkinlik(p, b.dataset.etk))))
+    } else if (acikPanel === "esya") {
+      $("sheetBaslik").textContent = "Eşyaların"
+      const l = KK.envanter(p)
+      let h = `<p class="kisi-not">Pazardan aldığın, bir yerde bulduğun ve yolculuklardan getirdiğin eşyalar burada durur.</p>`
+      h += l.length
+        ? l.map((x) => `<div class="satir-is"><div><b>${esc(x.ad)}${x.adet > 1 ? ` <span class="fiyat">× ${x.adet}</span>` : ""}</b><small>${esc(x.acik)}</small></div><div class="eylem-dar">${x.kullan ? `<button type="button" class="chip" data-kullan="${x.id}">Kullan</button>` : ""}${x.sat ? `<button type="button" class="chip" data-sat="${x.id}">Sat (${x.sat} lira)</button>` : ""}</div></div>`).join("")
+        : `<p class="bos">Henüz hiçbir eşyan yok. Pazardan bir şey alabilir ya da Batık mahallede dalarak bir şey bulabilirsin.</p>`
+      ic.innerHTML = h
+      ic.querySelectorAll("[data-kullan]").forEach((b) => (b.onclick = () => islem(() => KK.esyaKullan(p, b.dataset.kullan))))
+      ic.querySelectorAll("[data-sat]").forEach((b) => (b.onclick = () => islem(() => KK.esyaSat(p, b.dataset.sat))))
     }
+  }
+
+  // uygun olanlar önce; kategori başlıklarıyla
+  function kategorili(l, ciz) {
+    const sira = []
+    const grup = {}
+    for (const x of l) {
+      if (!grup[x.kat]) { grup[x.kat] = []; sira.push(x.kat) }
+      grup[x.kat].push(x)
+    }
+    sira.sort((a, b) => (grup[b].some((x) => x.uygun) ? 1 : 0) - (grup[a].some((x) => x.uygun) ? 1 : 0))
+    return sira.map((k) => {
+      const g = grup[k].slice().sort((a, b) => (b.uygun ? 1 : 0) - (a.uygun ? 1 : 0))
+      return `<h3 class="kat">${esc(k)}</h3>` + g.map(ciz).join("")
+    }).join("")
   }
 
   /* ── tutanak ────────────────────────────────────────────── */
@@ -275,6 +330,8 @@
       satir("Sicili", t.sicil) +
       satir("Hastalıkları", t.hastalik) +
       satir("Zindan", t.zindan) +
+      satir("Çetesi", t.cete) +
+      satir("Eşyaları", t.esyalar) +
       satir("Terekesi", `${t.lira} Koloni Lirası, ${t.fis} Nizam fişi`) +
       `</dl>`
     const muhur = t.kalan
