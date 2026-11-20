@@ -6,42 +6,55 @@
   <title>Nöbetçi — Kheshig Studio</title>
   <meta name="description" content="Seni izleyen ve alışkanlıklarını öğrenen bir rakibe karşı 1v1 nişancı. Kheshig Studio prototipi." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f3f0e8'/%3E%3Cpath d='M3 16 Q16 4 29 16 Q16 28 3 16Z' fill='%2316150f'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%238a0f0b'/%3E%3C/svg%3E" />
-  <script type="module" crossorigin src="./assets/index-Bs_yewrL.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DDshOa3G.css">
+  <script type="module" crossorigin src="./assets/index-cITJ2ECC.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-vAD_8HIZ.css">
 </head>
 <body>
   <canvas id="c"></canvas>
 
   <!-- Menü -->
   <div id="menu" class="screen">
-    <div class="menu-box">
-      <div class="logo-eye"><span></span></div>
-      <h1>NÖBETÇİ</h1>
-      <p class="tagline" data-tr="Seni izliyor. Seni öğreniyor." data-en="It watches you. It learns you.">Seni izliyor. Seni öğreniyor.</p>
-      <p id="menu-memory" class="memory"></p>
-      <div class="pick">
-        <div class="pick-row"><span class="pick-l" data-tr="Harita" data-en="Map">Harita</span>
-          <div class="seg" id="seg-map"><button data-v="avlu" data-tr="Avlu" data-en="Courtyard">Avlu</button><button data-v="kanal" data-tr="Kanal" data-en="Canal">Kanal</button></div>
+    <div class="menu-grid">
+      <div class="menu-left">
+        <div class="logo-eye"><span></span></div>
+        <h1>NÖBETÇİ</h1>
+        <p class="tagline" data-tr="Seni izliyor. Seni öğreniyor." data-en="It watches you. It learns you.">Seni izliyor. Seni öğreniyor.</p>
+        <p id="menu-memory" class="memory"></p>
+        <button id="btn-play" class="btn primary big" data-tr="Oyna" data-en="Play">Oyna</button>
+        <p class="hint-enter" data-tr="Enter ile de başlar" data-en="or press Enter">Enter ile de başlar</p>
+        <div class="menu-nav">
+          <button id="btn-board" class="btn" data-tr="Skor tablosu" data-en="Leaderboard">Skor tablosu</button>
+          <button id="btn-notebook" class="btn" data-tr="Nöbetçi'nin Defteri" data-en="The Sentinel's Notebook">Nöbetçi'nin Defteri</button>
+          <button id="btn-settings" class="btn" data-tr="Ayarlar" data-en="Settings">Ayarlar</button>
+          <button id="btn-keys" class="btn" data-tr="Kontroller" data-en="Controls">Kontroller</button>
         </div>
-        <div class="pick-row"><span class="pick-l" data-tr="Zorluk" data-en="Difficulty">Zorluk</span>
-          <div class="seg" id="seg-diff"><button data-v="easy" data-tr="Kolay" data-en="Easy">Kolay</button><button data-v="normal" data-tr="Normal" data-en="Normal">Normal</button><button data-v="hard" data-tr="Zor" data-en="Hard">Zor</button></div>
+        <div class="menu-mini">
+          <button id="btn-fs" class="btn small fs-btn" data-tr="Tam ekran" data-en="Fullscreen">Tam ekran</button>
+          <button id="btn-lang" class="btn small">EN</button>
         </div>
-        <div class="pick-row"><span class="pick-l" data-tr="Mod" data-en="Mode">Mod</span><select id="sel-mode"></select></div>
-        <div class="pick-row"><span class="pick-l" data-tr="Silahlar" data-en="Weapons">Silahlar</span><span class="loadout"><select id="sel-w1"></select><select id="sel-w2"></select></span></div>
-        <p id="map-desc" class="map-desc"></p>
-        <p id="mode-desc" class="map-desc"></p>
       </div>
-      <div class="menu-btns">
-        <button id="btn-play" class="btn primary" data-tr="Oyna" data-en="Play">Oyna</button>
-        <button id="btn-notebook" class="btn" data-tr="Nöbetçi'nin Defteri" data-en="The Sentinel's Notebook">Nöbetçi'nin Defteri</button>
-        <button id="btn-settings" class="btn" data-tr="Ayarlar" data-en="Settings">Ayarlar</button>
-        <button id="btn-keys" class="btn" data-tr="Kontroller" data-en="Controls">Kontroller</button>
-        <button id="btn-fs" class="btn small fs-btn" data-tr="Tam ekran" data-en="Fullscreen">Tam ekran</button>
-        <button id="btn-lang" class="btn small">EN</button>
+      <div class="menu-right">
+        <div class="card-box">
+          <div class="card-h" data-tr="Maç" data-en="Match">Maç</div>
+          <div class="pick-row"><span class="pick-l" data-tr="Mod" data-en="Mode">Mod</span><select id="sel-mode"></select></div>
+          <p id="mode-desc" class="map-desc"></p>
+          <div class="pick-row"><span class="pick-l" data-tr="Harita" data-en="Map">Harita</span>
+            <div class="seg" id="seg-map"><button data-v="avlu" data-tr="Avlu" data-en="Courtyard">Avlu</button><button data-v="kanal" data-tr="Kanal" data-en="Canal">Kanal</button><button data-v="kule" data-tr="Kule" data-en="Tower">Kule</button></div>
+          </div>
+          <p id="map-desc" class="map-desc"></p>
+          <div class="pick-row"><span class="pick-l" data-tr="Zorluk" data-en="Difficulty">Zorluk</span>
+            <div class="seg" id="seg-diff"><button data-v="easy" data-tr="Kolay" data-en="Easy">Kolay</button><button data-v="normal" data-tr="Normal" data-en="Normal">Normal</button><button data-v="hard" data-tr="Zor" data-en="Hard">Zor</button></div>
+          </div>
+          <div class="pick-row"><span class="pick-l" data-tr="Birincil" data-en="Primary">Birincil</span><select id="sel-w1"></select></div>
+          <div class="pick-row"><span class="pick-l" data-tr="İkincil" data-en="Secondary">İkincil</span><select id="sel-w2"></select></div>
+        </div>
+        <details class="card-box howto">
+          <summary data-tr="Kontroller ve kurallar" data-en="Controls and rules">Kontroller ve kurallar</summary>
+          <div class="controls" id="controls-list"></div>
+          <p class="rules" data-tr="Göze isabet iki kat hasar verir. Duvara doğru koşup zıplarsan duvarda koşarsın; kayıp zıplayarak hız biriktirebilirsin. Nöbetçi de ayarlarda açık olan hareketleri kullanır, her raunt seni biraz daha iyi tanır ve unutmaz." data-en="Hitting the eye does double damage. Run and jump at a wall to wall-run; slide-jump to build speed. The Sentinel uses the same movement you have switched on, knows you better every round, and doesn't forget.">.</p>
+        </details>
+        <p class="studio">Kheshig Studio · <span data-tr="prototip" data-en="prototype">prototip</span></p>
       </div>
-      <div class="controls" id="controls-list"></div>
-      <p class="rules" data-tr="5 raundu ilk alan kazanır. Göze isabet iki kat hasar verir. Duvara doğru koşup zıplarsan duvarda koşarsın; kayıp zıplayarak hız biriktirebilirsin. Nöbetçi her raunt seni biraz daha iyi tanır ve unutmaz." data-en="First to 5 rounds wins. Hitting the eye does double damage. Run and jump at a wall to wall-run; slide-jump to build speed. The Sentinel knows you a little better every round, and it doesn't forget.">5 raundu ilk alan kazanır.</p>
-      <p class="studio">Kheshig Studio · <span data-tr="prototip" data-en="prototype">prototip</span></p>
     </div>
   </div>
 
@@ -91,6 +104,11 @@
     <div class="menu-box">
       <div id="end-title" class="end-title"></div>
       <div id="end-body"></div>
+      <div id="end-submit" class="end-submit hidden">
+        <input id="end-name" maxlength="16" autocomplete="nickname" />
+        <button id="end-send" class="btn" data-tr="Skor tablosuna gönder" data-en="Submit to leaderboard">Skor tablosuna gönder</button>
+        <div id="end-msg" class="end-msg"></div>
+      </div>
       <div class="menu-btns">
         <button id="btn-again" class="btn primary" data-tr="Rövanş" data-en="Rematch">Rövanş</button>
         <button id="btn-notebook2" class="btn" data-tr="Nöbetçi'nin Defteri" data-en="The Sentinel's Notebook">Nöbetçi'nin Defteri</button>
@@ -184,8 +202,24 @@
       <h3 data-tr="Nöbetçi" data-en="Sentinel">Nöbetçi</h3>
       <label class="set"><span data-tr="Öğrenme hızı" data-en="Learning speed">Öğrenme hızı</span>
         <select id="set-learn"><option value="slow" data-tr="Yavaş" data-en="Slow">Yavaş</option><option value="normal" data-tr="Normal" data-en="Normal">Normal</option><option value="fast" data-tr="Hızlı" data-en="Fast">Hızlı</option></select><output></output></label>
-      <p class="set-hint" data-tr="Hızlı: birkaç rauntta alışkanlıklarını yakalar, en üst seviyeye ~6 rauntta çıkar. Normal: ~14 raunt. Yavaş: ~30 raunt." data-en="Fast: picks up your habits in a few rounds and peaks in ~6 rounds. Normal: ~14 rounds. Slow: ~30 rounds.">.</p>
+      <p class="set-hint" data-tr="Hızlı: alışkanlıklarını 1-2 rauntta yakalar, en üst seviyeye ~4 rauntta çıkar. Normal: ~9 raunt. Yavaş: ~20 raunt." data-en="Fast: picks up your habits in 1-2 rounds and peaks in ~4 rounds. Normal: ~9 rounds. Slow: ~20 rounds.">.</p>
       <label class="set check"><input id="set-live" type="checkbox" /><span data-tr="Oyunda Nöbetçi göstergesini göster" data-en="Show the Sentinel panel in game">Oyunda Nöbetçi göstergesini göster</span></label>
+    </div>
+  </div>
+
+  <!-- Skor tablosu -->
+  <div id="board" class="modal hidden">
+    <div class="modal-box">
+      <div class="nb-head">
+        <h2 data-tr="Skor tablosu" data-en="Leaderboard">Skor tablosu</h2>
+        <button id="board-close" class="x">×</button>
+      </div>
+      <div class="tabs" id="board-tabs">
+        <button data-mode="streak" class="on" data-tr="Sonsuz: Seri" data-en="Endless: Streak">Sonsuz: Seri</button>
+        <button data-mode="lives" data-tr="Sonsuz: 3 can" data-en="Endless: 3 lives">Sonsuz: 3 can</button>
+      </div>
+      <ol id="board-list" class="board-list"></ol>
+      <p class="set-hint" data-tr="Oyuncu başına en iyi skor gösterilir. Skorlar tarayıcıdan gönderildiği için tam hile korumalı değildir." data-en="Best score per player. Scores are sent from the browser, so the board is not fully cheat-proof.">.</p>
     </div>
   </div>
 
