@@ -89,8 +89,16 @@ export const PAID: Product[] = [
     ],
     price: "750 ₺'den",
     cta: "Örnek iste",
+    image: {
+      src: "/gorseller/firma-listesi.webp",
+      alt: "Örnek Excel görünümü: firma adı, kategori, telefon, ilçe, web sitesi ve puan sütunları; web sitesi olmayan firmalar kırmızıyla işaretli. Firma adları temsilî, telefonlar gizli.",
+      width: 900,
+      height: 600,
+    },
     en: {
       name: "Business Leads",
+      imageAlt:
+        "Sample Excel view: business name, category, phone, district, website and rating columns, with businesses without a website marked in red. Names are illustrative and phone numbers hidden.",
       kind: "Data",
       tagline: "Pick a sector and a city; get a business list with phone numbers in Excel.",
       description:
@@ -372,8 +380,16 @@ export const GAMES: Game[] = [
     description:
       "Kırık Köprüler evreninde bir hayat simülasyonu. Çöküş'ten 120 yıl sonra, Boğaz'da rastgele bir hayata doğuyorsun: büyük ihtimalle Alt Şehir'in sisinde, nadiren Hisar'da, bazen de lağımda. Yıl yıl yaşıyor; okula gidip gitmeyeceğini, hangi işe gireceğini, ailenle ne kadar ilgileneceğini sen seçiyorsun. Öldüğünde İntizam Heyeti hayatını mühürlü bir tutanağa geçiriyor. Bir hayat birkaç dakika sürüyor.",
     play: "/oyunlar/kirik-kopruler/",
+    image: {
+      src: "/gorseller/kirik-kopruler.webp",
+      alt: "Nüfus Defteri oyun ekranı: Hüseyin adlı karakterin sağlık, ciğer ve umut göstergeleri, yıl yıl hayat olayları ve Bir yıl yaşa düğmesi.",
+      width: 440,
+      height: 442,
+    },
     en: {
       name: "Broken Bridges: The Census Ledger",
+      imageAlt:
+        "Census Ledger game screen: a character's health, lungs and hope bars, year-by-year life events and the Live a year button.",
       platform: "Browser",
       description:
         "A life simulator set in the Kırık Köprüler (Broken Bridges) universe. 120 years after the Collapse, you're born into a random life on the Bosphorus: most likely in the fog of the Lower City, rarely in the Citadel, sometimes in the sewers. You live year by year, choosing whether to go to school, which work to take and how much to care for your family. When you die, the Order Council seals your life into an official record. A life takes a few minutes.",
@@ -388,8 +404,16 @@ export const GAMES: Game[] = [
     description:
       "Seni izleyen ve öğrenen bir rakibe karşı hızlı, 1v1 bir nişancı. Kâğıt ve mürekkepten arenalarda koşuyor, kayıp zıplayarak hız biriktiriyor, duvarlarda koşuyor ve atılıyorsun. Altı silah var (tüfek, burst, SMG, pompalı, keskin nişancı, tabanca); maçtan önce ikisini seçiyorsun. Nöbetçi hangi koridordan geldiğini, çatışmada hangi yöne kaçtığını, hangi silahı ne zaman çektiğini not ediyor ve her raunt sana göre biraz daha iyi hazırlanıyor. Ne öğrendiğini raunt aralarında söylüyor; defterini tarayıcında saklıyor. İki harita, üç zorluk ve beş mod var: Klasik, kaybedene kadar süren Seri, 3 canlı sonsuz mod, Tek Mermi ve Silah Rotasyonu. Klavye ve fare gerekir. Erken prototip.",
     play: "/oyunlar/nobetci/",
+    image: {
+      src: "/gorseller/nobetci.webp",
+      alt: "Nöbetçi oyun içi görüntü: kâğıt ve mürekkep tarzı bir arenada birinci şahıs tüfek, üstte skor ve süre, sağ üstte Nöbetçi'nin ne öğrendiğini gösteren panel.",
+      width: 800,
+      height: 500,
+    },
     en: {
       name: "Nöbetçi (Sentinel)",
+      imageAlt:
+        "Nöbetçi gameplay: a first-person rifle in a paper-and-ink arena, score and timer at the top, and the Sentinel's learning panel in the top right.",
       platform: "Browser",
       description:
         "A fast 1v1 shooter against an opponent that watches and learns you. You sprint, slide-hop to build speed, wall-run and dash through arenas of paper and ink, with six weapons (rifle, burst, SMG, shotgun, sniper, pistol) and a two-weapon loadout. The Sentinel notes which lane you take, which way you dodge, which weapon you pull and when, and it prepares a little better for you every round. Between rounds it tells you what it learned, and it keeps its notebook in your browser. Two maps, three difficulties and five modes: Classic, an endless Streak run, endless 3 Lives, One Shot and Weapon Rotation. Needs a keyboard and mouse. Early prototype.",

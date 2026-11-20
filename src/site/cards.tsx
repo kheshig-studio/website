@@ -81,7 +81,7 @@ export function GameCard({ g: raw }: { g: Game }) {
             width={g.image.width}
             height={g.image.height}
             loading="lazy"
-            className="h-auto max-h-80 w-auto rounded-lg shadow-[0_20px_40px_-20px_rgba(22,21,15,0.5)]"
+            className="h-auto max-h-80 w-auto max-w-full rounded-lg shadow-[0_20px_40px_-20px_rgba(22,21,15,0.5)]"
           />
         ) : (
           <div aria-hidden className="flex flex-col items-center gap-3 text-center">
