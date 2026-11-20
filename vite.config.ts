@@ -35,6 +35,28 @@ function analytics(): Plugin {
 }
 
 /**
+ * Gece modu: kaydedilmiş tema seçimini sayfa çizilmeden önce <html data-theme>'e yazar,
+ * böylece gece modunda açılışta beyaz ekran parlaması olmaz. Tüm sayfalara eklenir.
+ * Seçim yoksa CSS işletim sisteminin tercihini kullanır (index.css).
+ */
+function themeBoot(): Plugin {
+  return {
+    name: "kheshig:theme-boot",
+    transformIndexHtml() {
+      return [
+        {
+          tag: "script",
+          children:
+            'try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}',
+          injectTo: "head-prepend",
+        },
+        { tag: "meta", attrs: { name: "color-scheme", content: "light dark" }, injectTo: "head" },
+      ]
+    },
+  }
+}
+
+/**
  * src/tools/tweet-sil.ts → küçültülmüş tek parça JS.
  * Sayfa bunu `import { code } from "virtual:tweet-sil"` ile alır ve
  * bookmarklet + konsol kodu olarak gösterir. Araç x.com içinde
@@ -65,7 +87,7 @@ function tweetSilTool(): Plugin {
 // GitHub Pages /hakkimda/ adresini hakkimda/index.html olarak sunar.
 // Yeni sayfa eklerken buraya da bir satır ekle.
 export default defineConfig({
-  plugins: [react(), tailwindcss(), tweetSilTool(), analytics()],
+  plugins: [react(), tailwindcss(), tweetSilTool(), analytics(), themeBoot()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

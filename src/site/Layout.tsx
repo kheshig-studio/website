@@ -5,7 +5,6 @@ import { href, isEn, otherLangPath, t } from "./i18n"
 
 const NAV = [
   { href: href("products"), label: t("Ürünler", "Products") },
-  { href: href("free"), label: t("Ücretsiz", "Free") },
   { href: href("games"), label: t("Oyunlar", "Games") },
   { href: href("about"), label: t("Hakkımda", "About") },
 ]
@@ -48,6 +47,55 @@ function LangSwitch({ className }: { className?: string }) {
   )
 }
 
+/* ── Gece modu ─────────────────────────────────────────────
+   Seçim <html data-theme> olarak yazılır ve tarayıcıda hatırlanır.
+   Sayfa yüklenmeden önce okuyan küçük betik vite.config.ts'te (themeBoot). */
+type Theme = "light" | "dark"
+
+function currentTheme(): Theme {
+  if (typeof document === "undefined") return "light"
+  const set = document.documentElement.dataset.theme
+  if (set === "light" || set === "dark") return set
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+}
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>(currentTheme)
+  const next: Theme = theme === "dark" ? "light" : "dark"
+  const label =
+    next === "dark" ? t("Gece moduna geç", "Switch to dark mode") : t("Gündüz moduna geç", "Switch to light mode")
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        document.documentElement.dataset.theme = next
+        try {
+          localStorage.setItem("theme", next)
+        } catch {
+          /* gizli sekme vb. — seçim bu sayfada yine geçerli */
+        }
+        setTheme(next)
+      }}
+      aria-label={label}
+      title={label}
+      className="inline-flex size-9 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-paper-deep hover:text-ink"
+    >
+      <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+        {theme === "dark" ? (
+          // güneş: gündüz moduna geç
+          <>
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" strokeLinecap="round" />
+          </>
+        ) : (
+          // ay: gece moduna geç
+          <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" strokeLinejoin="round" />
+        )}
+      </svg>
+    </button>
+  )
+}
+
 function Header() {
   const [open, setOpen] = useState(false)
   return (
@@ -70,6 +118,7 @@ function Header() {
             </a>
           ))}
           <LangSwitch className="ml-1" />
+          <ThemeToggle />
           <a
             href={CONTACT.href}
             className="ml-2 inline-flex items-center gap-1.5 rounded-full border border-ink px-4 py-2 text-[15px] font-medium transition-colors hover:bg-ink hover:text-paper"
@@ -80,6 +129,7 @@ function Header() {
 
         <div className="flex items-center gap-1 md:hidden">
           <LangSwitch />
+          <ThemeToggle />
           <button
             type="button"
             className="-mr-2 inline-flex size-11 items-center justify-center rounded-full"
@@ -121,7 +171,7 @@ function Header() {
 /** Her sayfanın sonunda: ziyaretçiyi işe yönlendiren koyu bant. */
 export function CtaBand() {
   return (
-    <section className="bg-night text-paper">
+    <section className="bg-night text-on-night">
       <Container className="grid gap-10 py-20 sm:py-28 md:grid-cols-[1.4fr_1fr] md:items-end">
         <div>
           <Label className="text-night-soft">{t("Bir işin mi var?", "Got a project?")}</Label>
@@ -145,7 +195,7 @@ export function CtaBand() {
             href={LINKS.bionluk}
             target="_blank"
             rel="noreferrer noopener"
-            className="text-[15px] text-night-soft underline decoration-night-line underline-offset-4 transition-colors hover:text-paper"
+            className="text-[15px] text-night-soft underline decoration-night-line underline-offset-4 transition-colors hover:text-on-night"
           >
             {t(
               `ya da Bionluk güvencesiyle çalış · ★ ${PROOF.bionlukRating} (${PROOF.bionlukOrders} sipariş)`,
@@ -160,9 +210,9 @@ export function CtaBand() {
 
 function Footer() {
   const col = "flex flex-col gap-2.5 text-[15px]"
-  const link = "text-night-soft transition-colors hover:text-paper"
+  const link = "text-night-soft transition-colors hover:text-on-night"
   return (
-    <footer className="border-t border-night-line bg-night text-paper">
+    <footer className="border-t border-night-line bg-night text-on-night">
       <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div className="flex flex-col gap-3">
           <span className="font-display text-xl font-bold">Kheshig Studio</span>
@@ -176,7 +226,7 @@ function Footer() {
         <div className={col}>
           <Label className="mb-1 text-night-soft">Site</Label>
           <a className={link} href={href("products")}>{t("Satılık programlar", "Products")}</a>
-          <a className={link} href={href("free")}>{t("Ücretsiz programlar", "Free tools")}</a>
+          <a className={link} href={href("products", "ucretsiz")}>{t("Ücretsiz programlar", "Free tools")}</a>
           <a className={link} href={href("games")}>{t("Oyunlar", "Games")}</a>
           <a className={link} href={href("about")}>{t("Hakkımda", "About")}</a>
         </div>

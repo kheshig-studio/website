@@ -58,7 +58,7 @@ export function Button({
     ghost:
       "border border-ink/25 text-ink hover:border-ink hover:bg-ink hover:text-paper",
     light:
-      "bg-paper text-ink hover:bg-white",
+      "bg-on-night text-night hover:bg-white",
   }[variant]
   return (
     <a

@@ -39,18 +39,14 @@ const STEPS = [
 
 function Shelf() {
   const rows = [
-    ...PAID.map((raw) => {
+    // Raf yalnızca neler olduğunu gösterir; fiyatlar Ürünler sayfasında.
+    ...[...PAID, ...FREE].map((raw) => {
       const p = localProduct(raw, isEn)
-      return { key: p.slug, name: p.name, kind: p.kind, right: p.price ?? "—", href: href("products", p.slug) }
-    }),
-    ...FREE.map((raw) => {
-      const p = localProduct(raw, isEn)
-      return { key: p.slug, name: p.name, kind: p.kind, right: t("Ücretsiz", "Free"), href: href("free", p.slug) }
+      return { key: p.slug, name: p.name, kind: p.kind, href: href("products", p.slug) }
     }),
     ...GAMES.map((raw) => {
       const g = localGame(raw, isEn)
-      const right = g.status === "Yapım aşamasında" ? t("Yakında", "Soon") : t("Oyna", "Play")
-      return { key: g.slug, name: g.name, kind: t("Oyun", "Game"), right, href: href("games", g.slug) }
+      return { key: g.slug, name: g.name, kind: t("Oyun", "Game"), href: href("games", g.slug) }
     }),
   ]
   return (
@@ -67,7 +63,6 @@ function Shelf() {
                 {r.kind}
               </span>
               <span className="min-w-0 flex-1 font-display text-lg font-semibold tracking-[-0.01em]">{r.name}</span>
-              <span className="font-mono text-[13px] text-ink-soft group-hover:text-ink">{r.right}</span>
               <Arrow className="text-ink-soft transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />
             </a>
           </li>
@@ -98,7 +93,7 @@ function Home() {
               <Button href={href("contact")}>
                 {t("Projeni anlat", "Tell me about your project")} <Arrow />
               </Button>
-              <Button href={href("products")} variant="ghost">
+              <Button href={href("products", "satilik")} variant="ghost">
                 {t("Ürünlere bak", "See products")}
               </Button>
             </div>
@@ -155,7 +150,7 @@ function Home() {
           <div className="mt-14 grid gap-4 md:grid-cols-3">
             {[
               {
-                href: href("products"),
+                href: href("products", "satilik"),
                 label: t("Satılık", "For sale"),
                 title: t("Programlar", "Products"),
                 text: t(
@@ -165,7 +160,7 @@ function Home() {
                 dark: true,
               },
               {
-                href: href("free"),
+                href: href("products", "ucretsiz"),
                 label: t("Ücretsiz", "Free"),
                 title: t("Açık kaynak", "Open source"),
                 text: t("İndirin, kullanın, kodunu inceleyin. Hesap yok, reklam yok.", "Download it, use it, read the code. No account, no ads."),
@@ -182,12 +177,12 @@ function Home() {
                 href={d.href}
                 className={
                   "group flex min-h-72 flex-col rounded-2xl border p-7 transition-colors sm:p-9 " +
-                  (d.dark ? "border-ink bg-ink text-paper hover:border-brand hover:bg-brand" : "border-line bg-card hover:border-ink")
+                  (d.dark ? "border-night bg-night text-on-night hover:border-brand hover:bg-brand" : "border-line bg-card hover:border-ink")
                 }
               >
                 <Label className={d.dark ? "text-night-soft" : "text-ink-soft"}>{d.label}</Label>
                 <h3 className="mt-auto text-4xl font-bold tracking-[-0.03em]">{d.title}</h3>
-                <p className={"mt-3 leading-relaxed " + (d.dark ? "text-night-soft group-hover:text-paper/80" : "text-ink-soft")}>{d.text}</p>
+                <p className={"mt-3 leading-relaxed " + (d.dark ? "text-night-soft group-hover:text-on-night/80" : "text-ink-soft")}>{d.text}</p>
                 <span className="mt-6 inline-flex items-center gap-2 text-[15px] font-medium">
                   {t("Git", "Go")} <Arrow className="transition-transform group-hover:translate-x-1" />
                 </span>

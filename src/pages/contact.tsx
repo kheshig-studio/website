@@ -32,7 +32,7 @@ function Contact() {
         )}
       />
       <Container className="grid grid-cols-[minmax(0,1fr)] gap-5 py-16 sm:py-20 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-        <section className="relative rounded-2xl bg-ink p-6 text-paper sm:p-10">
+        <section className="relative rounded-2xl bg-night p-6 text-on-night sm:p-10">
           <ContactForm />
         </section>
 

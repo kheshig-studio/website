@@ -21,16 +21,48 @@
   --color-line: #d9d4c7;
   --color-brand: #8a0f0b;
 
-  /* koyu bant (CTA, footer) */
+  /* koyu bant (CTA, footer, iletişim paneli) — iki temada da koyu kalır */
   --color-night: #16150f;
   --color-night-soft: #a9a497;
   --color-night-line: #34322b;
+  /* koyu bant üstündeki yazı — iki temada da açık kalır */
+  --color-on-night: #f3f0e8;
+}
+
+/* ── Gece modu ───────────────────────────────────────────────
+   Varsayılan: işletim sisteminin tercihi. Menüdeki düğme seçimi
+   <html data-theme="light|dark"> olarak yazar ve tarayıcıda hatırlanır.
+   Kontrastlar (zemin #141311 üstünde): ink 15:1 · ink-soft 7.4:1 · brand 5.2:1 */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #141311;
+  --color-paper-deep: #1d1c19;
+  --color-card: #1a1916;
+  --color-ink: #ece8df;
+  --color-ink-soft: #aaa598;
+  --color-line: #33312b;
+  --color-brand: #e0574d;
+  --color-night: #0c0b0a;
+  --color-night-line: #2a2823;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-paper: #141311;
+    --color-paper-deep: #1d1c19;
+    --color-card: #1a1916;
+    --color-ink: #ece8df;
+    --color-ink-soft: #aaa598;
+    --color-line: #33312b;
+    --color-brand: #e0574d;
+    --color-night: #0c0b0a;
+    --color-night-line: #2a2823;
+  }
 }
 
 @layer base {
   html {
     font-family: var(--font-sans);
-    color-scheme: light;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
   }

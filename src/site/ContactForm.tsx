@@ -61,7 +61,7 @@ export function ContactForm() {
         <p className="font-display text-3xl font-bold tracking-[-0.02em]">{t("Mesajın elime ulaştı.", "Got your message.")}</p>
         <p className="max-w-md leading-relaxed text-night-soft">
           {t("Yazdığın e-posta adresine döneceğim. Acil bir şeyse doğrudan ", "I'll reply to the email you gave. If it's urgent, you can also write to ")}
-          <a href={`mailto:${EMAIL}`} className="text-paper underline underline-offset-4">
+          <a href={`mailto:${EMAIL}`} className="text-on-night underline underline-offset-4">
             {EMAIL}
           </a>
           {t(" adresine de yazabilirsin.", " directly.")}
@@ -72,7 +72,7 @@ export function ContactForm() {
             openedAt.current = Date.now()
             setState({ kind: "idle" })
           }}
-          className="mt-2 text-[15px] text-night-soft underline underline-offset-4 hover:text-paper"
+          className="mt-2 text-[15px] text-night-soft underline underline-offset-4 hover:text-on-night"
         >
           {t("Yeni mesaj yaz", "Write another message")}
         </button>
@@ -110,7 +110,7 @@ export function ContactForm() {
           {TOPICS.map((topic, i) => (
             <label key={topic} className="cursor-pointer">
               <input type="radio" name="topic" value={topic} defaultChecked={i === 0} className="peer sr-only" />
-              <span className="inline-flex min-h-10 items-center rounded-full border border-night-line px-4 text-[15px] text-night-soft transition-colors peer-checked:border-paper peer-checked:bg-paper peer-checked:text-ink peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-paper hover:text-paper">
+              <span className="inline-flex min-h-10 items-center rounded-full border border-night-line px-4 text-[15px] text-night-soft transition-colors peer-checked:border-on-night peer-checked:bg-on-night peer-checked:text-night peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-on-night hover:text-on-night">
                 {topic}
               </span>
             </label>
@@ -135,7 +135,7 @@ export function ContactForm() {
       </label>
 
       {state.kind === "error" && (
-        <p role="alert" className="rounded-xl border border-[#e2a19c]/40 bg-[#8a0f0b]/25 px-4 py-3 text-[15px] text-paper">
+        <p role="alert" className="rounded-xl border border-[#e2a19c]/40 bg-[#8a0f0b]/25 px-4 py-3 text-[15px] text-on-night">
           {state.message} {t("İstersen ", "You can also ")}
           <a href={JOB_MAIL} className="underline underline-offset-4">
             {t("e-postayla yaz", "send an email")}
@@ -148,7 +148,7 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={sending}
-          className="inline-flex min-h-12 items-center gap-2 rounded-full bg-paper px-6 text-[15px] font-medium text-ink transition-colors hover:bg-white disabled:opacity-60"
+          className="inline-flex min-h-12 items-center gap-2 rounded-full bg-on-night px-6 text-[15px] font-medium text-night transition-colors hover:bg-white disabled:opacity-60"
         >
           {sending ? t("Gönderiliyor…", "Sending…") : t("Mesajı gönder", "Send message")} {!sending && <Arrow />}
         </button>
